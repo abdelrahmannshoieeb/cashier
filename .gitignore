@@ -11,7 +11,7 @@
 /storage/debugbar/*
 
 # Ignore compiled files and cache
-.env
+
 .env.*.backup
 .phpunit.result.cache
 Homestead.json
