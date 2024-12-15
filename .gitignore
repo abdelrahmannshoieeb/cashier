@@ -2,6 +2,7 @@
 
 # Laravel-specific files and directories
 /vendor/
+!composer.lock
 /node_modules/
 /public/storage
 /storage/*.key
@@ -11,6 +12,7 @@
 
 # Ignore compiled files and cache
 .env
+.env.*.backup
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
@@ -23,15 +25,15 @@ Homestead.yaml
 .DS_Store
 Thumbs.db
 
-# Ignore deployment scripts and logs
+# Deployment scripts and logs
 /deploy.sh
 *.log
 
-# Ignore composer and npm lock files if not managed
-composer.lock
-package-lock.json
-yarn.lock
+# Keep lock files for dependency consistency
+!composer.lock
+!package-lock.json
+!yarn.lock
 
-# Ignore static analysis tools
+# Static analysis tools cache
 /.php-cs-fixer.cache
 /.phpstan/cache/
