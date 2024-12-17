@@ -26,6 +26,7 @@ class User extends Authenticatable
         'box_access',
         'edit_invoices_access',
         'role',
+        'shop_id',
     ];
 
     /**
@@ -53,8 +54,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(Product::class);
     }
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class);
+    }
     public function categories()
     {
         return $this->hasMany(Category::class);
+    }
+
+    public function boxesOperations()
+    {
+        return $this->hasMany(BoxOperation::class);
     }
 }

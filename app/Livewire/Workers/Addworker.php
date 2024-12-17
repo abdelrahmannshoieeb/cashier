@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Workers;
 
+use App\Models\Shop;
 use App\Models\User; // Replace with your worker model if not `User`
 use Livewire\Component;
 
@@ -10,15 +11,24 @@ class AddWorker extends Component
     public $name;
     public $pass;
     public $phone;
+    public $shop_id;
 
     public $is_active = 0 ;
     public $box_access = 0;
     public $edit_invoices_access = 0;
 
     public $worker; // Worker instance to toggle access if updating an existing worker.
+    public $shops; // Worker instance to toggle access if updating an existing worker.
 
+
+    public function mount()
+    {
+        $this->shops =Shop::all();
+    }
     public function save()
     {
+
+        // dd($this->shop_id);
         $this->validate(
             [
                 'name' => 'required|unique:users,name',
@@ -48,6 +58,7 @@ class AddWorker extends Component
             'is_active' => $this->is_active,
             'box_access' => $this->box_access,
             'edit_invoices_access' => $this->edit_invoices_access,
+            'shop_id' => $this->shop_id
         ]);
 
         session()->flash('message', 'Worker added successfully!');

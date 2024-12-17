@@ -1,4 +1,4 @@
-<div class="overflow-x-auto grid lg:grid-cols-1 gap-6">
+<div class="overflow-x-auto" style="width: 99%;">
     <div class="min-w-full inline-block align-middle">
         <div class="border rounded-lg divide-y divide-gray-200 dark:border-gray-700 dark:divide-gray-700">
             <div class="py-3 px-4 d-flex">

@@ -35,13 +35,7 @@
             </li>
 
             <li class="menu-title"> التصنيفات والمنتجات</li>
-
-            <li class="menu-item">
-                <a href="apps-calendar.html" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_calendar_line"></i></span>
-                    <span class="menu-text font-bold"> جدول زمني</span>
-                </a>
-            </li>
+    
 
             <li class="menu-item">
                 <a href="{{ route('addCategory')}}" class="menu-link">
@@ -77,26 +71,75 @@
             </li>
           
 
-
+            <li class="menu-title">الصندوق</li>
+            
             <li class="menu-item">
-                <a href="apps-file-manager.html" class="menu-link">
+                <a href="{{route('boxControl')}}" class="menu-link">
                     <span class="menu-icon"><i class="mgc_folder_2_line"></i></span>
-                    <span class="menu-text"> File Manager </span>
+                    <span class="menu-text font-bold"> التحكم  في الصندوق </span>
                 </a>
             </li>
-
-
+            <li class="menu-item">
+                <a href="{{route('boxoperations')}}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_folder_2_line"></i></span>
+                    <span class="menu-text font-bold"> سحب واضافة الى الصندوق </span>
+                </a>
+            </li>
+            
+            
+            <li class="menu-title">العملاء</li>
             <li class="menu-item">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon"><i class="mgc_building_2_line"></i></span>
-                    <span class="menu-text"> Universities </span>
+                    <span class="menu-text"> العملاء </span>
                     <span class="menu-arrow"></span>
                 </a>
 
                 <ul class="sub-menu hidden">
                     <li class="menu-item">
-                        <a href="" class="menu-link">
-                            <span class="menu-text">Universities</span>
+                        <a href="{{route('customers')}}" class="menu-link">
+                            <span class="menu-text"> العملاء</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{route('addCustomer')}}" class="menu-link">
+                            <span class="menu-text">اضافة عميل</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{route('addCustomersBalance')}}" class="menu-link">
+                            <span class="menu-text">اضافة رصيد العملاء</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-title">الموردين</li>
+            <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_building_2_line"></i></span>
+                    <span class="menu-text"> الموردين </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{route('suppliers')}}" class="menu-link">
+                            <span class="menu-text"> الموردين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{route('addSupplier')}}" class="menu-link">
+                            <span class="menu-text">اضافة مورد</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{route('addSupplierBalance')}}" class="menu-link">
+                            <span class="menu-text">اضافة رصيد للمورد</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{route('supplierBonnds')}}" class="menu-link">
+                            <span class="menu-text">سندات الموردين</span>
                         </a>
                     </li>
                 </ul>

@@ -18,7 +18,6 @@
     <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/fontawesome.min.css" rel="stylesheet" type="text/css">
 
-
     <!-- Icons css -->
     <link href="{{asset('assets/css/icons.min.css')}}" rel="stylesheet" type="text/css">
 
@@ -76,7 +75,7 @@
                     <div>
                         <script>
                             document.write(new Date().getFullYear())
-                        </script> © Konrix - <a href="https://coderthemes.com/" target="_blank">Coderthemes</a>
+                        </script> z  - <a href="https://coderthemes.com/" target="_blank">for software services</a>
                     </div>
                 </div>
             </footer>
@@ -514,16 +513,6 @@
 
 
 
-
-    <script src="{{asset('assets/libs/prismjs/prism.js')}}"></script>
-    <script src="{{asset('assets/libs/prismjs/plugins/normalize-whitespace/prism-normalize-whitespace.min.js')}}"></script>
-    <script src="{{asset('assets/libs/clipboard/clipboard.min.js')}}"></script>
-    <script src="{{asset('assets/js/pages/highlight.js')}}"></script>
-
-    <!-- Plugin Js -->
-    <script src="{{asset('assets/libs/simplebar/simplebar.min.js')}}"></script>
-    <script src="{{asset('assets/libs/feather-icons/feather.min.js')}}"></script>
-    <script src="{{asset('assets/libs/%40frostui/tailwindcss/frostui.js')}}"></script>
 
     <!-- App Js -->
     <script src="{{asset('assets/js/app.js')}}"></script>

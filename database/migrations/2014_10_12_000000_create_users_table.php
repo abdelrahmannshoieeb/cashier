@@ -20,6 +20,8 @@ return new class extends Migration
             $table ->integer('phone')->nullable();
             $table ->boolean('box_access');
             $table ->boolean('edit_invoices_access');
+
+            $table ->foreignId('shop_id')->nullable()->constrained('shops')->onDelete('cascade')->onUpdate('cascade');
             $table->rememberToken();
             $table->timestamps();
         });

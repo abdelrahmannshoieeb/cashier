@@ -22,6 +22,18 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/products', 'product.products')->name('products');
     Route::view('/addWorker', 'workers.addWorker')->name('addWorker');
     Route::view('/workers', 'workers.workers')->name('workers');
+    Route::view('/boxControl', 'box.boxControl')->name('boxControl');
+    Route::view('/boxoperations', 'box.boxoperations')->name('boxoperations');
+    
+    Route::view('/addCustomersBalance', 'customers.addCustomersBalance')->name('addCustomersBalance');
+    Route::view('/addCustomer', 'customers.addCustomer')->name('addCustomer');
+    Route::view('/customers', 'customers.customers')->name('customers');
+    Route::view('/customerBonnds', 'customers.customersBonds')->name('customerBonnds');
+
+    Route::view('/addSupplierBalance', 'suppliers.addSupplierBalance')->name('addSupplierBalance');
+    Route::view('/addSupplier', 'suppliers.addSupplier')->name('addSupplier');
+    Route::view('/suppliers', 'suppliers.suppliers')->name('suppliers');
+    Route::view('/supplierBonnds', 'suppliers.supplierBonnds')->name('supplierBonnds');
 });
 
 Route::view('/login', 'Auth.login') ->name ('login');

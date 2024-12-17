@@ -12,8 +12,16 @@
                 <div class="flex flex-col gap-3">
                     <div class="">
                         <label for="project-name" class="mb-2 block " style="font-weight:600;">اسم الموظف</label>
-                        <input style="font-weight:600;" type="email" id="project-name" class="form-input" placeholder="ادخل اسم المنتج" aria-describedby="input-helper-text" wire:model="name">
+                        <input style="font-weight:600;" type="email" id="project-name" class="form-input" placeholder="ادخل اسم الموظف" aria-describedby="input-helper-text" wire:model="name">
                         @error('name') <span class="text-red-500">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label for="example-select" class="text-gray-800 text-sm font-medium inline-block mb-2" class="form-label font-bold">الفرع التابع له </label>
+                        <select class="form-select" id="example-select" wire:model="shop_id">
+                            @foreach ($shops as $shop )
+                            <option value="{{ $shop->id }}">{{ $shop->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="">
@@ -38,7 +46,7 @@
                                 role="switch"
                                 wire:click="toggleStatus">
                             <label class="ms-1.5">
-                            حالة المتستخدم-{{ $is_active ? 'فعال' : 'غير فعال' }} 
+                                حالة المتستخدم-{{ $is_active ? 'فعال' : 'غير فعال' }}
                             </label>
                         </div>
                         <div class="flex items-center">
@@ -48,7 +56,7 @@
                                 role="switch"
                                 wire:click="toggleBoxAccess">
                             <label class="ms-1.5">
-                            حالة الوصول للصندوق-{{ $box_access ? 'فعال' : 'غير فعال' }}
+                                حالة الوصول للصندوق-{{ $box_access ? 'فعال' : 'غير فعال' }}
                             </label>
                         </div>
                         <div class="flex items-center">
@@ -58,7 +66,7 @@
                                 role="switch"
                                 wire:click="toggleEditInoviceAccess">
                             <label class="ms-1.5">
-                            حالة تعديل الفواتير-{{ $edit_invoices_access ? 'فعال' : 'غير فعال' }}
+                                حالة تعديل الفواتير-{{ $edit_invoices_access ? 'فعال' : 'غير فعال' }}
 
                             </label>
                         </div>
