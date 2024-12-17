@@ -27,7 +27,7 @@ class AuthController extends Controller
 
         // Check for user with "type" => "user"
         $user = User::where('name', $request->name)
-                    ->where('type', 'user')
+                    ->where('role', 'user')
                     ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
