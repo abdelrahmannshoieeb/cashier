@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories', [CategoriesController::class, 'getCategories']);
     Route::post('/categories', [CategoriesController::class, 'addCategory']);
     Route::post('/products', [ProductsController::class, 'addProduct']);
-Route::get('/products', [ProductsController::class, 'getProducts']);
+    Route::get ('/products', [ProductsController::class, 'getProducts']);
 });
 
 Route::post('/login', [AuthController::class, 'login']);

@@ -14,7 +14,7 @@
 
                     <button type="button" wire:click="thesearch" class="btn bg-info text-white" style="margin:10px">ابحث</button>
                     <button type="button" wire:click="viewAll" class="btn bg-dark text-white" style="margin:10px"> الكل</button>
-                    <div style="width: 200px;" x-data="{ open: false }" class="relative">
+                    <div style="width: 230px;" x-data="{ open: false }" class="relative">
                         <button @click="open = !open" type="button" class="py-2 px-3 inline-flex bg-success text-white justify-center items-center text-sm gap-2 rounded-md font-medium shadow-sm align-middle transition-all">
                             فلتر حسب نوع السند <i class="mgc_down_line text-base"></i>
                         </button>
@@ -31,6 +31,26 @@
                             <a wire:click="empty; open = false"
                                 class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
                                 الكل
+                            </a>
+                        </div>
+                    </div>
+                    <div style="width: 230px;" x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" type="button" class="py-2 px-3 inline-flex bg-success text-white justify-center items-center text-sm gap-2 rounded-md font-medium shadow-sm align-middle transition-all">
+                            فلتر حسب طريقة الدفع <i class="mgc_down_line text-base"></i>
+                        </button>
+
+                        <div x-show="open" @click.outside="open = false" class="absolute mt-2 z-50 bg-white border shadow-md rounded-lg p-2 dark:bg-slate-800 dark:border-slate-700 transition-all duration-300">
+                            <a wire:click="cheque; open = false"
+                                class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+                                شيك
+                            </a>
+                            <a wire:click="credit; open = false"
+                                class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+                                كريدت
+                            </a>
+                            <a wire:click="cash; open = false"
+                                class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+                                نقدي
                             </a>
                         </div>
                     </div>

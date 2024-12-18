@@ -85,6 +85,20 @@
                     <span class="menu-text font-bold"> سحب واضافة الى الصندوق </span>
                 </a>
             </li>
+            <li class="menu-title">المصاريف</li>
+            
+            <li class="menu-item">
+                <a href="{{route('expenses')}}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_folder_2_line"></i></span>
+                    <span class="menu-text font-bold"> عرض حركة المصاريف </span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="{{route('addExpense')}}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_folder_2_line"></i></span>
+                    <span class="menu-text font-bold"> اضافة سند مصاريف </span>
+                </a>
+            </li>
             
             
             <li class="menu-title">العملاء</li>
@@ -109,6 +123,11 @@
                     <li class="menu-item">
                         <a href="{{route('addCustomersBalance')}}" class="menu-link">
                             <span class="menu-text">اضافة رصيد العملاء</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{route('customerBonnds')}}" class="menu-link">
+                            <span class="menu-text">سندات العملاء</span>
                         </a>
                     </li>
                 </ul>

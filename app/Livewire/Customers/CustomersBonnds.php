@@ -49,6 +49,15 @@ class CustomersBonnds extends Component
     public function empty() {
         $this->customersBonds = CustomerBonnd::all();
     }
+    public function cheque() {
+        $this->customersBonds = CustomerBonnd::where('method', 'cheque')->get();
+    }
+    public function credit() {
+        $this->customersBonds = CustomerBonnd::where('method', 'credit')->get();
+    }
+    public function cash() {
+        $this->customersBonds = CustomerBonnd::where('method', 'cash')->get();
+    }
     public function render()
     {
         return view('livewire.customers.customers-bonnds');

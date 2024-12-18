@@ -9,19 +9,25 @@ class BoxControl extends Component
 {
     public $settings;
 
-    public $adding_customers_fund_to_box = 0;
-    public $adding_sellers_fund_to_box = 0;
-    public $subtract_Suppliers_fund_from_box = 0;
-    public $subtract_Procurement_fund_from_box = 0;
-    public $subtract_Expenses_from_box = 0;
+    public $adding_customers_fund_to_box ;
+    public $adding_sellers_fund_to_box;
+    public $subtract_Suppliers_fund_from_box;
+    public $subtract_Procurement_fund_from_box;
+    public $subtract_Expenses_from_box ;
 
 
     public function mount()
     {
      $this->settings = settings::first();   
-    //  dd($this->settings);
-
-        $this->update();
+    
+     $this->settings->update([
+        'adding_customers_fund_to_box' => $this->settings->adding_customers_fund_to_box,
+        'adding_sellers_fund_to_box' => $this->settings->adding_sellers_fund_to_box,
+        'subtract_Suppliers_fund_from_box' => $this->settings->subtract_Suppliers_fund_from_box,
+        'subtract_Procurement_fund_from_box' => $this->settings->subtract_Procurement_fund_from_box,
+        'subtract_Expenses_from_box' => $this->settings->subtract_Expenses_from_box,
+    ]);
+       
     }
 
     public function update()

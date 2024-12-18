@@ -48,6 +48,18 @@ class SupplierBonnds extends Component
     public function empty() {
         $this->SupplierBonds = SupplierBond::all();
     }
+
+
+    public function cheque() {
+        $this->SupplierBonds = SupplierBond::where('method', 'cheque')->get();
+    }
+    public function credit() {
+        $this->SupplierBonds = SupplierBond::where('method', 'credit')->get();
+    }
+    public function cash() {
+        $this->SupplierBonds = SupplierBond::where('method', 'cash')->get();
+    }
+
     public function render()
     {
         return view('livewire.suppliers.supplier-bonnds');

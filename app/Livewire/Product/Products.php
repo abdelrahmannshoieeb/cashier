@@ -46,6 +46,16 @@ class Products extends Component
 
         $this->products = Product::all();
     }
+
+    public function alerted()
+    {
+        $this->products = Product::whereColumn('itemStock', '<', 'stockAlert')->get();
+    }
+
+    public function stockFilter($min, $max)
+    {
+        $this->products = Product::whereBetween('itemStock', [$min, $max])->get();
+    }
     public function render()
     {
         return view('livewire.product.products');

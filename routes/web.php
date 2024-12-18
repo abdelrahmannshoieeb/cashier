@@ -18,8 +18,11 @@ use PHPUnit\Framework\Attributes\Group;
 Route::middleware(['auth'])->group(function () {
     Route::view('/', 'index')->name('index');
     Route::view('/addCategory', 'category.addCategory')->name('addCategory');
+    
     Route::view('/addProduct', 'product.addProduct')->name('addProduct');
     Route::view('/products', 'product.products')->name('products');
+    Route::view('/editProduct/{id}', 'product.editProduct')->name('editProduct');
+    
     Route::view('/addWorker', 'workers.addWorker')->name('addWorker');
     Route::view('/workers', 'workers.workers')->name('workers');
     Route::view('/boxControl', 'box.boxControl')->name('boxControl');
@@ -34,6 +37,9 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/addSupplier', 'suppliers.addSupplier')->name('addSupplier');
     Route::view('/suppliers', 'suppliers.suppliers')->name('suppliers');
     Route::view('/supplierBonnds', 'suppliers.supplierBonnds')->name('supplierBonnds');
+
+    Route::view('/addExpense', 'expense.addExpense')->name('addExpense');
+    Route::view('/expenses', 'expense.expenses')->name('expenses');
 });
 
 Route::view('/login', 'Auth.login') ->name ('login');

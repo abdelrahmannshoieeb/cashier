@@ -10,9 +10,40 @@
                         class="form-input ps-11 font-bold"
                         placeholder="ابحث عن التصنيفات"
                         wire:model="search">
-                        
-                                        <button type="button" wire:click="thesearch" class="btn bg-info text-white" style="margin:10px">ابحث</button>
-                                        <button type="button" wire:click="viewAll" class="btn bg-dark text-white" style="margin:10px"> الكل</button>
+
+                    <button type="button" wire:click="thesearch" class="btn bg-info text-white" style="margin:10px">ابحث</button>
+                    <button type="button" wire:click="viewAll" class="btn bg-dark text-white" style="margin:10px"> الكل</button>
+                    <div style="width: 350px;" x-data="{ open: false }" class="relative">
+                    <button wire:click="alerted" type="button" class="btn bg-info text-white">عرض المنتجات التي اقتربت على الانهاء</button>
+                    </div>
+                    <div style="width: 200px;" x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" type="button" class="py-2 px-3 inline-flex bg-success text-white justify-center items-center text-sm gap-2 rounded-md font-medium shadow-sm align-middle transition-all">
+                            فلتر حسب الكمية <i class="mgc_down_line text-base"></i>
+                        </button>
+
+                        <div x-show="open" @click.outside="open = false" class="absolute mt-2 z-50 bg-white border shadow-md rounded-lg p-2 dark:bg-slate-800 dark:border-slate-700 transition-all duration-300">
+                            <a wire:click="stockFilter (1, 100); open = false "; open = false"
+                                class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+                                من 1 ل 100
+                            </a>
+                            <a wire:click="stockFilter (100, 200); open = false "
+                                class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+                                من 100 ل 200
+                            </a>
+                            <a wire:click="stockFilter (200, 300); open = false "
+                                class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+                                من 200 ل 300   
+                            </a>
+                            <a wire:click="stockFilter (300, 400); open = false "
+                                class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+                                من 300 ل 400   
+                            </a>
+                            <a wire:click="stockFilter (400, 5000); open = false "
+                                class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+                                اكثر من 400   
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -52,9 +83,10 @@
                                     <li> عدد القطع في الباكت-{{ $product->items_in_packet }}</li>
                                 </ul>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200   text-center"  >
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200   text-center">
                                 <ul>
-                                    <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-black text-white">                                    <li style="font-size: larger;"> السعر الاول-{{ $product->buying_price }} </li>
+                                    <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-black text-white">
+                                        <li style="font-size: larger;"> {{ $product->buying_price }} </li>
                                     </span>
                                 </ul>
                             </td>
@@ -66,25 +98,24 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200   text-center" style="font-size: larger; font-weight: bolder">{{ $product->category->name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder">
-            <div class="flex items-center">
-                <!-- Toggle switch -->
-                <input
-                    class="form-switch"
-                    type="checkbox"
-                    role="switch"
-                    id="flexSwitchCheck{{ $product->id }}"
-                    wire:click="toggleStatus({{ $product->id }})"
-                    {{ $product->isActive ? 'checked' : '' }}
-                >
-                <label class="ms-1.5" for="flexSwitchCheck{{ $product->id }}">
-                    {{ $product->isActive ? 'مفعل' : 'غير مفعل' }}
-                </label>
-            </div>
-        </td>
+                                <div class="flex items-center">
+                                    <!-- Toggle switch -->
+                                    <input
+                                        class="form-switch"
+                                        type="checkbox"
+                                        role="switch"
+                                        id="flexSwitchCheck{{ $product->id }}"
+                                        wire:click="toggleStatus({{ $product->id }})"
+                                        {{ $product->isActive ? 'checked' : '' }}>
+                                    <label class="ms-1.5" for="flexSwitchCheck{{ $product->id }}">
+                                        {{ $product->isActive ? 'مفعل' : 'غير مفعل' }}
+                                    </label>
+                                </div>
+                            </td>
 
                             <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                                 <a class="text-danger hover:text-sky-700 mt-5 " href="#" style="font-size: larger; font-weight: bolder;" wire:click="delete({{$product->id }})">مسح</a><br>
-                                <a class="text-primary hover:text-sky-700" href="#" style="font-size: larger; font-weight: bolder" wire:click="delete({{$product->id }})">تعديل</a>
+                                <a class="text-primary hover:text-sky-700" href="{{ route('editProduct', $product->id) }}" style="font-size: larger; font-weight: bolder">تعديل</a>
                             </td>
                         </tr>
                         @endforeach
