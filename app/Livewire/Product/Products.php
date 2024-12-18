@@ -2,17 +2,20 @@
 
 namespace App\Livewire\Product;
 
+use App\Models\Category;
 use App\Models\Product;
 use Livewire\Component;
 
 class Products extends Component
 {
     public $products ;
+    public $categories;
     public $search ;
 
     public function mount()
     {
         $this->products = Product::all();
+        $this->categories = Category::all();
     }
     public function delete($id)
     {
@@ -55,6 +58,10 @@ class Products extends Component
     public function stockFilter($min, $max)
     {
         $this->products = Product::whereBetween('itemStock', [$min, $max])->get();
+    }
+    public function categoryFilter($id)
+    {
+        $this->products = Product::where('category_id', $id)->get();
     }
     public function render()
     {

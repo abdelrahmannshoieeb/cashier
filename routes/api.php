@@ -22,8 +22,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories', [CategoriesController::class, 'getCategories']);
     Route::post('/categories', [CategoriesController::class, 'addCategory']);
-    Route::post('/products', [ProductsController::class, 'addProduct']);
+ 
     Route::get ('/products', [ProductsController::class, 'getProducts']);
+    Route::post('/products', [ProductsController::class, 'addProduct']);
 });
 
 Route::post('/login', [AuthController::class, 'login']);

@@ -25,7 +25,7 @@ class ProductsController extends Controller
             'endDate' => 'nullable|date',
             'isActive' => 'nullable|boolean',
             'category_id' => 'required|exists:categories,id',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'required|exists:users,id',
         ]);
 
         // Check for validation errors
