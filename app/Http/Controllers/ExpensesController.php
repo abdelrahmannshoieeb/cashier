@@ -54,7 +54,7 @@ class ExpensesController extends Controller
                 }
             }
 
-            if ($request->type == 'subtract') {
+            if ($request->type == 'subtract' ) {
 
                 $validator = Validator::make($request->all(), [
                     'name' => 'required|string|max:255',
@@ -79,16 +79,29 @@ class ExpensesController extends Controller
                     'type' => $request->type,
                     'user_id' => auth()->user()->id
                 ]);
-                if ($settings->subtract_Expenses_from_box == 1) {
+                if ($settings->subtract_Expenses_from_box == 1 && $settings->box_value >= $request->value) {
                     $settings->update([
                         'box_value' => $settings->box_value - $request->value,
+                        
                     ]);
+                    return response()->json([
+                        'expense operation' => 'done',
+                        'subtracting from box' => 'done',
+                        'data' => $expense
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'expense operation' => 'done',
+                        'subtracting from box' => 'false',
+                        'data' => $expense
+                    ], 200);
                 }
             }
+           
             return response()->json([
                 'success' => true,
                 'data' => $expense
-            ]);
+            ] ,200);
         }
     }
 }

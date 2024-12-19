@@ -15,10 +15,11 @@ class ProductsController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price1' => 'required|integer',
-            'price2' => 'nullable|integer',
-            'price3' => 'nullable|integer',
-            'buying_price' => 'nullable|integer',
+            'price1' => 'required|numeric|regex:/^\d+(\.\d{1})?$/',
+            'price2' => 'nullable|numeric|regex:/^\d+(\.\d{1})?$/',
+            'price3' => 'nullable|numeric|regex:/^\d+(\.\d{1})?$/',
+            'buying_price' => 'nullable|numeric|regex:/^\d+(\.\d{1})?$/',
+
             'itemStock' => 'nullable|integer',
             'PacketStock' => 'nullable|integer',
             'items_in_packet' => 'nullable|integer',
@@ -76,7 +77,7 @@ class ProductsController extends Controller
     public function editProduct(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-    
+
         // Check if user is authorized to edit the product
         if (auth()->user()->edit_product == 0) {
             return response()->json([
@@ -84,7 +85,7 @@ class ProductsController extends Controller
                 'message' => 'User not authorized'
             ], 403);
         }
-    
+
         // Validation rules
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -101,7 +102,7 @@ class ProductsController extends Controller
             'isActive' => 'nullable|boolean',
             'category_id' => 'required|exists:categories,id',
         ]);
-    
+
         // Check for validation errors
         if ($validator->fails()) {
             return response()->json([
@@ -109,34 +110,43 @@ class ProductsController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-    
+
         // Update product fields
         $product->update($request->only([
-            'name', 'description', 'price1', 'price2', 'price3', 
-            'buying_price', 'itemStock', 'PacketStock', 
-            'items_in_packet', 'stockAlert', 'endDate', 
-            'isActive', 'category_id'
+            'name',
+            'description',
+            'price1',
+            'price2',
+            'price3',
+            'buying_price',
+            'itemStock',
+            'PacketStock',
+            'items_in_packet',
+            'stockAlert',
+            'endDate',
+            'isActive',
+            'category_id'
         ]));
-    
+
         return response()->json([
             'success' => true,
             'message' => 'Product updated successfully',
             'data' => $product
         ]);
     }
-    public function getProductByCategory( Request $request) {
+    public function getProductByCategory(Request $request)
+    {
         $products = Product::where('category_id', $request->id)->get();
         if ($products->isEmpty()) {
             return response()->json([
                 'success' => false,
                 'message' => 'No products found for this category'
             ], 404);
-        }else{
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => $products
             ]);
         }
     }
-    
 }
