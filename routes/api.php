@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\ProductsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,7 +25,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/categories', [CategoriesController::class, 'addCategory']);
  
     Route::get ('/products', [ProductsController::class, 'getProducts']);
-    Route::post('/products', [ProductsController::class, 'addProduct']);
+    Route::post('/product', [ProductsController::class, 'addProduct']);
+    Route::put('/product/{id}', [ProductsController::class, 'editProduct']);
+    Route::get('/productByCategory/{id}', [ProductsController::class, 'getProductByCategory']);
+
+    Route::post('/expense', [ExpensesController::class, 'addExpense']);
+
+
 });
 
 Route::post('/login', [AuthController::class, 'login']);
+
