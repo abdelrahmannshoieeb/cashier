@@ -25,14 +25,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/categories', [CategoriesController::class, 'addCategory']);
  
     Route::get ('/products', [ProductsController::class, 'getProducts']);
+    Route::get ('/productByCategory/{id}', [ProductsController::class, 'getProductByCategory']);
     Route::post('/product', [ProductsController::class, 'addProduct']);
     Route::put('/product/{id}', [ProductsController::class, 'editProduct']);
-    Route::get('/productByCategory/{id}', [ProductsController::class, 'getProductByCategory']);
 
     Route::post('/expense', [ExpensesController::class, 'addExpense']);
-
-
+    
 });
 
 Route::post('/login', [AuthController::class, 'login']);
-

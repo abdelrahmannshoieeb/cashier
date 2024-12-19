@@ -1,5 +1,5 @@
 
-@extends('auth.layout.body')
+@extends('Auth.layout.body')
 @section('title', 'Login')
 @section('auth-content')
 
