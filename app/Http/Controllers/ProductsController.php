@@ -45,7 +45,7 @@ class ProductsController extends Controller
             'price1' => $request->price1,
             'price2' => $request->price2,
             'price3' => $request->price3,
-            'buying price' => $request->{'buying price'},
+            'buying_price' => $request->{'buying_price'},
             'itemStock' => $request->itemStock,
             'PacketStock' => $request->PacketStock,
             'items_in_packet' => $request->items_in_packet,
