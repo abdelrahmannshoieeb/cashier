@@ -40,6 +40,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::view('/addExpense', 'expense.addExpense')->name('addExpense');
     Route::view('/expenses', 'expense.expenses')->name('expenses');
+
+    Route::view('/addInvoice', 'invoices.addInvoice')->name('addInvoice');
 });
 
 Route::view('/login', 'Auth.login') ->name ('login');

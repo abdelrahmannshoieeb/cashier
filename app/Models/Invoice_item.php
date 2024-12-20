@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Customer extends Model
+class Invoice_item extends Model
 {
     use HasFactory;
-
     protected $guarded = [];
 
-    public function customer_bonds()
+
+    public function invoice()
     {
-        return $this->hasMany(CustomerBonnd::class);
+        return $this->belongsTo(Invoice::class);
     }
 
-    public function invoices()
+    public function product()
     {
-        return $this->hasMany(Invoice::class);
+        return $this->belongsTo(Product::class);
     }
 }

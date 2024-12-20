@@ -30,4 +30,9 @@ class Product extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function invoice_items()
+    {
+        return $this->hasMany(Invoice_item::class);
+    }
 }
