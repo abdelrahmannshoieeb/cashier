@@ -7,16 +7,23 @@
                 </div>
 
                 <div class="relative max-w-l flex items-center gap-3 align-middle">
-                    <div>
-                        <label for="select-label" class="mb-2 block" style="font-weight:600;">نوع العميل</label>
-                        <select id="select-label" class="form-select" wire:model="customerType"
-                        wire:change="changeCustomerType">
-                            <option value="attached">عميل موجود</option>
-                            <option value="unattached">عميل غير موجود</option>
-                        </select>
+                    <div class="flex">
+                        <!-- Toggle switch -->
+                        <input
+                            class="form-switch"
+                            type="checkbox"
+                            role="switch"
+                            id="flexSwitchCheck"
+                            wire:click="toggleCustomerType">
+                        <label class="ms-1.5" for="flexSwitchCheck">
+                        </label>
                     </div>
 
+
                     @if ($customerType == 'attached')
+                    <label for="example-number" class="text-gray-800 text-sm font-medium inline-block mb-2">
+                        {{ $customerType === 'attached' ? 'عميل سابق' : 'عميل لمره واحده' }}
+                    </label>
                     <input
                         type="text"
                         name="search-customer"
@@ -30,13 +37,19 @@
                     <ul id="customer-list" class="flex flex-col" style="max-height: 200px; overflow-y: auto; padding: 10px; width: 25%;">
                         @if ($customers)
                         @foreach ($customers as $customer)
-                        <li class="product-item inline-flex cursor-pointer items-center gap-x-2 py-2.5 px-4 text-sm font-medium bg-white border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                        <li class="product-item inline-flex cursor-pointer items-center gap-x-2 py-2.5 px-4 text-sm font-medium border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                             wire:click="selectedCustomer({{ $customer->id }})">
                             {{ $customer->name }} ({{ $customer->balance }})
                         </li>
                         @endforeach
                         @endif
                     </ul>
+                    @else
+                    <div>
+                        <label for="example-number" class="text-gray-800 text-sm font-medium inline-block mb-2">اسم العميل</label>
+                        <input class="form-input" placeholder="اسم العميل" id="example-number" type="text" name="qty"
+                            wire:model="customerName">
+                    </div>
                     @endif
                 </div>
 

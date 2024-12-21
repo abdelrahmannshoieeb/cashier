@@ -9,7 +9,7 @@ use App\Models\Product;
 use Livewire\Component;
 
 class AddInvoice extends Component
-{
+{  public $bg;
     public $products;
     public $selectedProduct;
     public $search;
@@ -37,13 +37,15 @@ class AddInvoice extends Component
     ];
 
     public $payMethod;
+    public $customerName;
     public $payedAmount;
     public $notes;
     public $discount = 0;
     public $status = 'unpaid';
-    public $customerType;
+    public $customerType = false;
     public $customer_id;
 
+    
     public function addItem()
     {
         $this->items[] = [
@@ -67,6 +69,7 @@ class AddInvoice extends Component
             $this->items[$itemIndex]['price'] = $this->selectedProduct->price;
             $this->items[$itemIndex]['id'] = $this->selectedProduct->id;
         }
+
     }
     public function selectedCustomer($customerId)
     {
@@ -76,7 +79,9 @@ class AddInvoice extends Component
         // Optionally, you can fetch the customer data here or pass it to other variables
         $customer = Customer::find($customerId);
         $this->searchCustomer = $customer->name; // Update the search term to customer name
-        // You can also pass customer data to other variables if necessary
+
+        $this->bg = " bg-green ";
+        
     }
 
     public function updatePrice($itemIndex)
@@ -114,9 +119,13 @@ class AddInvoice extends Component
             'discount' => $this->discount,
             'status' => $this->status,
             'customerType' => $this->customerType,
+            'customerName' => $this->customerName,
             'customer_id' => $this->customer_id,
         ]);
-
+        
+        
+        
+        
         // Save Invoice Items
         foreach ($this->items as $item) {
             Invoice_item::create([
@@ -127,6 +136,7 @@ class AddInvoice extends Component
                 'invoice_id' => $invoice->id,
             ]);
         }
+        dd($this->items);
 
         // Reset fields
         $this->reset(['items', 'payMethod', 'payedAmount', 'notes', 'discount', 'status', 'customerType', 'customer_id']);
@@ -163,6 +173,15 @@ class AddInvoice extends Component
     
         // Optionally reindex the array to fix any gaps in the array keys
         $this->items = array_values($this->items);
+    }
+
+    public function toggleCustomerType()
+    {
+        if ($this->customerType === "attached") {
+            $this->customerType = "unattached";
+        } else {
+            $this->customerType = "attached";
+        }
     }
     
     public function render()
