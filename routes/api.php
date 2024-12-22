@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\ProductsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -30,6 +32,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/product/{id}', [ProductsController::class, 'editProduct']);
 
     Route::post('/expense', [ExpensesController::class, 'addExpense']);
+
+    Route::get('/customers', [CustomerController::class, 'getCustomers']);
+    Route::post('/addCustomer', [CustomerController::class, 'addCustomer']);
     
 });
 

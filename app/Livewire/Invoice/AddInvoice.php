@@ -123,10 +123,6 @@ class AddInvoice extends Component
             'customer_id' => $this->customer_id,
         ]);
         
-        
-        
-        
-        // Save Invoice Items
         foreach ($this->items as $item) {
             Invoice_item::create([
                 'qty' => $item['quantity'],
@@ -136,9 +132,8 @@ class AddInvoice extends Component
                 'invoice_id' => $invoice->id,
             ]);
         }
-        dd($this->items);
 
-        // Reset fields
+        
         $this->reset(['items', 'payMethod', 'payedAmount', 'notes', 'discount', 'status', 'customerType', 'customer_id']);
         $this->items = [
             [
