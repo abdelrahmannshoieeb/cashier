@@ -21,10 +21,16 @@ class Handler extends ExceptionHandler
 
     protected function unauthenticated($request, \Illuminate\Auth\AuthenticationException $exception)
     {
-
-        return response()->json(['message' => 'Login first',
-    'status' => '401'], 401);
+        // Check if the request is an API call (expects JSON)
+        if ($request->is('api/*') || $request->expectsJson()) {
+            return response()->json(['message' => 'Login first',
+        'status' => 401], 401);
+        }
+    
+        // Redirect to the login page for web requests
+        return redirect()->guest(route('login'));
     }
+    
 
 
     /**

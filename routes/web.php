@@ -16,10 +16,10 @@ use PHPUnit\Framework\Attributes\Group;
 // make midllware for auth and make it group
     
 Route::middleware(['auth'])->group(function () {
-    Route::view('/', 'index')->name('index');
+    // Route::view('/', 'index')->name('index');
     Route::view('/addCategory', 'category.addCategory')->name('addCategory');
     
-    Route::view('/addProduct', 'product.addProduct')->name('addProduct');
+    Route::view('/', 'product.addProduct')->name('addProduct');
     Route::view('/products', 'product.products')->name('products');
     Route::view('/editProduct/{id}', 'product.editproduct')->name('editProduct');
     
