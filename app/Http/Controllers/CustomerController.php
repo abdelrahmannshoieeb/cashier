@@ -71,44 +71,75 @@ class CustomerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'value' => 'required|numeric|regex:/^\d+(\.\d{1})?$/',
-            'notes' => 'nullable|string',
-            'method' => 'required|string|in:cash,credit,cheque',
-            'type' => 'required|string|in:add,subtract',
+            'note' => 'nullable|string',
+            'method' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $validMethods = ['نقد', 'ائتمان', 'شيك']; // Arabic equivalents of cash, credit, cheque
+                    if (!in_array($value, $validMethods)) {
+                        $fail('طريقة الدفع يجب أن تكون واحدة من: نقد، ائتمان، شيك');
+                    }
+                },
+            ],
+            'type' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $validTypes = ['إضافة', 'سحب']; // Arabic equivalents of add, subtract
+                    if (!in_array($value, $validTypes)) {
+                        $fail('نوع العملية يجب أن يكون واحدة من: إضافة، سحب');
+                    }
+                },
+            ],
             'customer_id' => 'required|exists:customers,id',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'errors' => $validator->errors()
             ], 422);
         }
-
+    
         $settings = Settings::first();
-        $type = $request->type == 1 ? 'add' : 'subtract';
-
+    
+        // Map Arabic terms to English equivalents
+        $methodMapping = [
+            'نقد' => 'cash',
+            'ائتمان' => 'credit',
+            'شيك' => 'cheque',
+        ];
+    
+        $typeMapping = [
+            'إضافة' => 'add',
+            'سحب' => 'subtract',
+        ];
+    
+        $method = $methodMapping[$request->method] ?? $request->method;
+        $type = $typeMapping[$request->type] ?? $request->type;
+    
         $customerTransaction = CustomerBonnd::create([
             'type' => $type,
             'value' => $request->value,
             'notes' => $request->note,
-            'method' => $request->method,
-            'customer_id' => $request->customer_id
+            'method' => $method,
+            'customer_id' => $request->customer_id,
         ]);
-
+    
         if ($customerTransaction) {
             $customer = $customerTransaction->customer;
-
-            // dd($customer);
-            // Update customer's balance
-            if ($request->type == 'add' && $settings->adding_customers_fund_to_box) {
+    
+            // Update customer's balance and box value
+            if ($type === 'add' && $settings->adding_customers_fund_to_box) {
                 $customer->balance += $request->value;
                 $settings->update([
                     'box_value' => $settings->box_value - $request->value,
                 ]);
                 $customer->save();
             }
-
-            if ($request->type == 'subtract' && $settings->adding_customers_fund_to_box) {
+    
+            if ($type === 'subtract' && $settings->adding_customers_fund_to_box) {
                 $customer->balance -= $request->value;
                 $settings->update([
                     'box_value' => $settings->box_value + $request->value,
@@ -116,12 +147,12 @@ class CustomerController extends Controller
                 $customer->save();
             }
         }
-
+    
         return response()->json([
             'success' => true,
-            'message' => $type == 'add' ? 'Amount added successfully' : 'Amount subtracted successfully',
+            'message' => $type === 'add' ? 'Amount added successfully' : 'Amount subtracted successfully',
             'data' => $customerTransaction,
-
         ], 200);
     }
+    
 }
