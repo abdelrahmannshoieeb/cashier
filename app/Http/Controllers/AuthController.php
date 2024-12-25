@@ -29,8 +29,6 @@ class AuthController extends Controller
         $user = User::where('name', $request->name)
                     ->where('role', 'user')
                     ->first();
-        $username= $user->name;
-        $shop = $user->shop->name;
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
@@ -48,8 +46,7 @@ class AuthController extends Controller
             'message' => 'Login successful',
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $username,
-            'shop' => $shop
+            'user' => $user
         ], 200);
     }
 }
