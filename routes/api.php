@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,11 +34,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/expense', [ExpensesController::class, 'addExpense']);
 
+    
     Route::get('/customers', [CustomerController::class, 'getCustomers']);
     Route::post('/addCustomer', [CustomerController::class, 'addCustomer']);
-    
-
     Route::post('/addCustomerBond', [CustomerController::class, 'addCustomerBond']);
+    
+    Route::get('/suppliers', [SupplierController::class, 'getSuppliers']);
+    Route::post('/addSupplier', [SupplierController::class, 'addSupplier']);
+    Route::post('/addSupplierBond', [SupplierController::class, 'addSupplierBond']);
+
 });
 
 Route::post('/login', [AuthController::class, 'login']);
