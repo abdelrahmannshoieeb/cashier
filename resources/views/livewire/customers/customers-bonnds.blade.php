@@ -1,4 +1,3 @@
-
 <div class="overflow-x-auto">
     <div class="min-w-full inline-block align-middle">
         <div class="border rounded-lg divide-y divide-gray-200 dark:border-gray-700 dark:divide-gray-700">
@@ -75,7 +74,7 @@
 
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700 overflow-x-auto  style="width: 99%; >
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700 overflow-x-auto  style=" width: 99%;>
                             @foreach($customersBonds as $customersBond)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200 text-center">{{ $customersBond->id }}</td>
@@ -85,11 +84,11 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder">{{ $customersBond->value }}</td>
                                 @if ($customersBond->type == 'add')
                                 <td>
-                                    <li> <span  class=" gap-1.5 py-1.5 px-3  rounded-full text-bold font-medium bg-green-100 text-green-800">زيادة</span> </li>
+                                    <li> <span class=" gap-1.5 py-1.5 px-3  rounded-full text-bold font-medium bg-green-100 text-green-800">زيادة</span> </li>
                                 </td>
                                 @else
                                 <td>
-                                    <li> <span  class=" gap-1.5 py-1.5 px-3 rounded-full text-bold font-medium bg-red-100 text-red-800">نقصان</span> </li>
+                                    <li> <span class=" gap-1.5 py-1.5 px-3 rounded-full text-bold font-medium bg-red-100 text-red-800">نقصان</span> </li>
                                 </td>
                                 @endif
                                 @if ($customersBond->notes)
@@ -101,27 +100,52 @@
                                 @endif
                                 @if ($customersBond->method == 'cash')
                                 <td class="px-6 py-4 whitespace-nowrap text-boldtext-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder;">
-                                <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full font-medium bg-red-500 text-white text-bold">كاش</span></td>
+                                    <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full font-medium bg-red-500 text-white text-bold">كاش</span>
+                                </td>
                                 @elseif($customersBond->method == 'credit')
                                 <td class="px-6 py-4 whitespace-nowrap text-bold text-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder;">
-                                <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full font-medium bg-green-500 text-white text-bold">كريدت</span></td>
+                                    <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full font-medium bg-green-500 text-white text-bold">كريدت</span>
+                                </td>
                                 @else
                                 <td class="px-6 py-4 whitespace-nowrap text-boldtext-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder;">
-                                <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full font-medium bg-primary -500 text-white text-bold">شيك</span></td>
-                               
+                                    <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full font-medium bg-primary -500 text-white text-bold">شيك</span>
+                                </td>
+
                                 @endif
-                             
-                              
-                             
+
+
+
                                 <td class="px-6 py-4 whitespace-nowrap text-bold text-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder">
                                     <li> <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">{{ $customersBond->customer->balance }}</span> </li>
                                 </td>
-                               
-                               
-                              
-                               
+
+
+
+
                                 <td class="px-6 py-4 whitespace-nowrap text-end text-bold font-medium">
-                                    <a class="text-danger hover:text-sky-700 mt-5 " href="#" style="font-size: larger; font-weight: bolder;" wire:click="delete({{$customersBond->id }})">مسح</a><br>
+                                    <button type="button" class="text-danger hover:text-sky-700 mt-5 " data-fc-target="default-modal" data-fc-type="modal" type="button" style="font-size: larger; font-weight: bolder;">مسح</button><br>
+                                    <div id="default-modal" class="w-full h-full mt-5 fixed top-0 left-0 z-50 transition-all duration-500 fc-modal hidden">
+                                        <div class="fc-modal-open:opacity-100 duration-500 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto flex flex-col bg-white border shadow-sm rounded-md dark:bg-slate-800 dark:border-gray-700">
+                                            <div class="flex justify-between items-center py-2.5 px-4 border-b dark:border-gray-700">
+                                                <h3 class="font-medium text-gray-800 dark:text-white text-lg">
+                                                    Modal Title
+                                                </h3>
+                                                <button class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 dark:text-gray-200"
+                                                    data-fc-dismiss type="button">
+                                                    <span class="material-symbols-rounded">close</span>
+                                                </button>
+                                            </div>
+                                            <div class="px-4 py-8 overflow-y-auto">
+                                                <p class="text-gray-800 dark:text-gray-200">
+                                                    هل انت متاكد من حذف السند
+                                                </p>
+                                            </div>
+                                            <div class="flex justify-end items-center gap-4 p-4 border-t dark:border-slate-700">
+                                                <button class="btn dark:text-gray-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 hover:dark:bg-slate-700 transition-all" data-fc-dismiss type="button">الغاء </button>
+                                                <button class="btn text-white font-bold border border-slate-200 dark:border-slate-700 hover:bg-red-600 hover:dark:bg-red-700 transition-all" data-fc-dismiss type="button" wire:click="delete({{$customersBond->id }})" style="background-color: red;">حذف</button>
+                                            </div>
+                                        </div>
+                                    </div> 
                                     <a class="text-primary hover:text-sky-700" href="#" style="font-size: larger; font-weight: bolder" wire:click="delete({{$customersBond->id }})">تعديل</a>
                                 </td>
                             </tr>

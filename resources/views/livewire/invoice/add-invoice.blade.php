@@ -1,187 +1,248 @@
 <main class="flex-grow p-6">
     <div class="grid lg:grid-cols-6 gap-6">
-        <div class="lg:col-span-3 space-y-6">
+        <div class="lg:col-span-4 space-y-6">
             <div class="card p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="card-title font-bold" style="font-size: 26px;">فاتورة رقم</h3>
-                </div>
+                <h3 class="card-title font-bold mb-4" style="font-size: 26px;"> انشاء فاتورة</h3>
 
-                <div class="relative max-w-l flex items-center gap-3 align-middle">
-                    <div class="flex">
-                        <!-- Toggle switch -->
-                        <input
-                            class="form-switch"
-                            type="checkbox"
-                            role="switch"
-                            id="flexSwitchCheck"
-                            wire:click="toggleCustomerType">
-                        <label class="ms-1.5" for="flexSwitchCheck">
+
+                <div class="grid md:grid-cols-2 gap-3">
+                    <!-- Customer Selection -->
+                    <div class="relative max-w-l flex items-center gap-3 mb-6">
+                        <div class="flex">
+                            <input class="form-switch" type="checkbox" id="flexSwitchCheck" wire:click="toggleCustomerType">
+                            <label class="ms-1.5" for="flexSwitchCheck"></label>
+                        </div>
+                        <label class="text-gray-800 text-sm font-medium">
+                            {{ $customerType === 'attached' ? 'عميل سابق' : 'عميل لمره واحده' }}
                         </label>
+                        @if ($customerType === 'attached')
+                        <input type="text" id="search-customer" class="form-input ps-11" placeholder="ابحث عن عميل"
+                            wire:model="searchCustomer">
+                        <button class="btn bg-info text-white" wire:click="thesearchCustomer">ابحث</button>
+                        @else
+                        <input type="text" id="customer-name" class="form-input" placeholder="اسم العميل"
+                            wire:model="customerName">
+                        @endif
                     </div>
 
-
-                    @if ($customerType == 'attached')
-                    <label for="example-number" class="text-gray-800 text-sm font-medium inline-block mb-2">
-                        {{ $customerType === 'attached' ? 'عميل سابق' : 'عميل لمره واحده' }}
-                    </label>
-                    <input
-                        type="text"
-                        name="search-customer"
-                        id="search-customer"
-                        class="form-input ps-11 font-bold"
-                        placeholder="ابحث عن عميل"
-                        wire:model="searchCustomer">
-
-                    <button type="button" wire:click="thesearchCustomer" class="btn bg-info text-white" style="margin:10px">ابحث</button>
-
-                    <ul id="customer-list" class="flex flex-col" style="max-height: 200px; overflow-y: auto; padding: 10px; width: 25%;">
-                        @if ($customers)
-                        @foreach ($customers as $customer)
-                        <li class="product-item inline-flex cursor-pointer items-center gap-x-2 py-2.5 px-4 text-sm font-medium border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                            wire:click="selectedCustomer({{ $customer->id }})">
-                            {{ $customer->name }} ({{ $customer->balance }})
-                        </li>
-                        @endforeach
-                        @endif
-                    </ul>
-                    @else
+                    @if ($searchCustomer)
+                    <div class="overflow-x-auto mb-6">
+                        <div class="min-w-full inline-block align-middle">
+                            <ul style="max-height: 10rem; overflow-y: auto;" class="max-w-xs flex flex-col">
+                                @foreach ($customers as $customer )
+                                <li wire:click="selectedCustomer({{ $customer->id }})" style="cursor: pointer;"
+                                    class="inline-flex items-center gap-x-2 py-2.5 px-4 text-sm font-medium bg-white border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                                    {{ $customer->name }} ({{ $customer->balance }})
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                @if ($showButtons)
+                <br>
+                <div class="grid md:grid-cols-4 gap-3 mb-6 w-full">
                     <div>
-                        <label for="example-number" class="text-gray-800 text-sm font-medium inline-block mb-2">اسم العميل</label>
-                        <input class="form-input" placeholder="اسم العميل" id="example-number" type="text" name="qty"
-                            wire:model="customerName">
+                        <label class="text-gray-800 text-sm font-medium mb-2 block">المبلغ المدفوع</label>
+                        <input type="number" class="form-input" wire:model="payedAmount">
+                    </div>
+                    <div>
+                        <label class="text-gray-800 text-sm font-medium mb-2 block">ملاحظات</label>
+                        <textarea type="text" class="form-input" wire:model="notes"> </textarea>
+                    </div>
+                    <div>
+                        <label class="text-gray-800 text-sm font-medium mb-2 block">خصم</label>
+                        <input type="number" class="form-input" wire:model="discount">
+                    </div>
+                    <div>
+                        <label for="example-select" class="text-gray-800 text-sm font-medium inline-block mb-2">طريقة الدفع </label>
+                        <select class="form-select" id="example-select" wire:model="payMethod">
+                            <option value="creditCard">بطاقة الدفع</option>
+                            <option value="cash">كاش</option>
+                            <option value="cheque">شيك</option>
+                            <option value="credit">اجل</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- Product Table -->
+                <table class="w-full border-collapse border border-gray-300 mb-6">
+                    <thead>
+                        <tr>
+                            <th class="border border-gray-300 px-4 py-2">اسم المنتج</th>
+                            <th class="border border-gray-300 px-4 py-2">الكمية</th>
+                            <th class="border border-gray-300 px-4 py-2">السعر</th>
+                            <th class="border border-gray-300 px-4 py-2">الإجمالي</th>
+                            <th class="border border-gray-300 px-4 py-2">إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($items as $index => $item)
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">{{ $item['name'] }}</td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <input type="number"
+                                    class="form-input"
+                                    value="{{ $item['quantity'] }}"
+                                    id="quantity-{{ $index }}"> <!-- Unique ID to target the value -->
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">{{ $item['calculated_price'] }}</td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                {{ (int)$item['quantity'] * (float)$item['calculated_price'] }}
+                            </td>
+
+                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                <button
+                                    class="btn bg-danger text-white"
+                                    wire:click="removeItem({{ $index }})">
+                                    حذف
+                                </button>
+                                <button
+                                    class="btn bg-info text-white"
+                                    wire:click="updateQuantity({{ $index }}, document.getElementById('quantity-{{ $index }}').value)">
+                                    تحديث الكمية
+                                </button>
+                            </td>
+                        </tr>
+
+                        @endforeach
+                        <tr>
+                            <td class="px-4 py-2 font-bold" colspan="3">الإجمالي</td> <!-- Merge cells and bold text -->
+                            <td class="px-4 py-2 text-right">
+                                {{ collect($items)->sum(function ($item) {
+        return (float)$item['quantity'] * (float)$item['calculated_price'];
+    }) }}
+                            </td>
+
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+                <div class="flex justify-end mt-4">
+                    <button class="btn bg-green-500 text-white" wire:click="addItem">أضف المنتج</button>
+                </div>
+                <div class="grid md:grid-cols-3 gap-3">
+                    <!-- Search Product Section -->
+                    <div>
+                        <label class="text-gray-800 text-sm font-medium mb-2 block">اسم المنتج</label>
+                        <input type="text" id="search-product" class="form-input" placeholder="ابحث عن منتج" wire:model="search">
+                        <button class="btn bg-info text-white mt-2" wire:click="thesearch">ابحث</button>
+                        @if ($search)
+                        <div class="overflow-x-auto m-6">
+                            <div class="min-w-full inline-block align-middle">
+                                <ul style="max-height: 10rem; overflow-y: auto;" class="max-w-xs flex flex-col">
+                                    @foreach ($products as $product)
+                                    <li wire:click="selectProduct({{ $product->id }})" style="cursor: pointer;"
+                                        class="inline-flex items-center gap-x-2 py-2.5 px-4 text-sm font-medium bg-white border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                                        {{ $product->name }}
+                                    </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+
+                    <!-- Quantity Section -->
+                    <div>
+                        <label class="text-gray-800 text-sm font-medium mb-2 block">الكمية</label>
+                        <input type="number" class="form-input" wire:model="newItem.quantity">
+                    </div>
+
+                    <!-- Sell Price Section -->
+                    @if ($selectedProduct)
+                    <div>
+                        <label class="text-gray-800 text-sm font-medium mb-2 block">اختر السعر</label>
+                        <select class="form-input" wire:model="sell_price">
+                            <option value="{{ $selectedProduct->price1 }}">Price 1 ({{ $selectedProduct->price1 }})</option>
+                            <option value="{{ $selectedProduct->price2 }}">Price 2 ({{ $selectedProduct->price2 }})</option>
+                            <option value="{{ $selectedProduct->price3 }}">Price 3 ({{ $selectedProduct->price3 }})</option>
+                        </select>
+                    </div>
+                    @endif
+
+
+                    @if (session()->has('quantityError'))
+                    <div class="bg-danger/25 text-dark text-center text-xl rounded-md p-4 mt-5" role="alert" style="width: 75%;">
+                        <span class="font-bold text-lg"></span> {{ session('quantityError') }}
                     </div>
                     @endif
                 </div>
 
 
-                <div class="grid md:grid-cols-4 gap-3">
-
-                    <div>
-                        <label for="select-label" class="mb-2 block" style="font-weight:600;">طريقة الدفع</label>
-                        <select id="select-label" class="form-select" wire:model="payMethod">
-                            <option value="creditCard">بطاقة</option>
-                            <option value="cash">كاش</option>
-                            <option value="cheque">شيك </option>
-                            <option value="credit">اجل </option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="example-number" class="text-gray-800 text-sm font-medium inline-block mb-2">المدفوع</label>
-                        <input class="form-input" placeholder="الكمية" id="example-number" type="number" name="qty"
-                            wire:model="payedAmount">
-                    </div>
-                </div>
-
-
-
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="card-title font-bold" style="font-size: 22px;">المنتجات</h3>
-                    <div wire:click="addItem"
-                        class="inline-flex items-center gap-2 justify-center rounded-lg cursor-pointer dark:bg-slate-700 w-100 h-9">
-                        <i class="mgc_add_fill" style="font-size: 20px;"></i>
-                        <p style="font-size: 18px;">اضف منتج للفاتورة</p>
-                    </div>
-                </div>
-                @foreach ($items as $index => $item)
-                <div class="flex justify-start gap-3 items-start mb-4">
-                    <h1 class="card-title font-bold" style="font-size: 18px;">منتج رقم {{ $index + 1 }} </h1>
-                    <button type="button" class="btn bg-danger text-white" wire:click="removeItem({{ $index }})">احذف المنتج</button>
-                </div>
-                <div class="flex flex-col gap-3 bg--100 p-3" style="border-radius: 10px;">
-                    <div class="relative max-w-l flex items-center gap-3 align-middle">
-                        <input
-                            type="text"
-                            name="table-with-pagination-search"
-                            id="table-with-pagination-search"
-                            class="form-input ps-11 font-bold"
-                            placeholder="ابحث عن منتج"
-                            wire:model="search">
-
-                        <button type="button" wire:click="thesearch" class="btn bg-info text-white" style="margin:10px">ابحث</button>
-
-                        <ul id="product-list" class="flex flex-col" style="max-height: 200px; overflow-y: auto; padding: 10px; width: 25%;">
-                            @if ($products)
-                            @foreach ($products as $product)
-                            <li class="product-item inline-flex cursor-pointer items-center gap-x-2 py-2.5 px-4 text-sm font-medium bg-white border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                                wire:click="selectProduct({{ $index }}, {{ $product->id }})">
-                                {{ $product->name }} ({{ $product->itemStock }})
-                            </li>
-                            @endforeach
-                            @endif
-                        </ul>
-                    </div>
-
-                    <div class="grid md:grid-cols-4 gap-3">
-                        <div>
-                            <label for="example-number" class="text-gray-800 text-sm font-medium inline-block mb-2">الكمية</label>
-                            <input class="form-input" placeholder="الكمية" id="example-number" type="number" name="qty"
-                                wire:model="items.{{ $index }}.quantity">
-                        </div>
-
-                        <div>
-                            <label for="select-label" class="mb-2 block" style="font-weight:600;">سعر البيع له</label>
-                            <select id="select-label" class="form-select" wire:model="items.{{ $index }}.sell_price"
-                                wire:change="updatePrice({{ $index }})">
-                                <option value="1">سعر رقم 1</option>
-                                <option value="2">سعر رقم 2</option>
-                                <option value="3">سعر رقم 3</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label for="item-price" class="text-gray-800 text-sm font-medium inline-block mb-2">السعر</label>
-                            <input class="form-input" placeholder="السعر" id="item-price" type="text" name="price"
-                                value="{{ $item['calculated_price'] }}" disabled>
-                        </div>
-
-                        <div>
-                            <label for="project-description" class="mb-2 block" style="font-weight:600;">ملاحظات</label>
-                            <textarea id="project-description" class="form-input" rows="4" wire:model="items.{{ $index }}.notes"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <hr style="margin: 20px;">
-                @endforeach
 
             </div>
         </div>
+    </div>
 
-        <div class="lg:col-span-3 mt-5">
-            <div class="flex justify-end gap-3">
-                <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none">
-                    Cancle
-                </button>
-                <button
+    <div class="lg:col-span-3 mt-5">
+        <div class="flex justify-end gap-3">
+            <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none">
+                الغاء
+            </button>
+            @if ($invoice)
+            <a
+            style="cursor: pointer;"
+                wire:click="saveInvoice"
+                type="button"
+                 href="{{ route('printer', $invoice->id) }}
+                 id="redirectButton" 
+                 class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
+                 طباعة وحفظ الفاتورة
+                </a>
+                @else
+                <a
                     wire:click="saveInvoice"
-                    type="button" class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
-                    Save
+                    type="button"
+                    style="cursor: pointer;"
+                     id="redirectButton" 
+                     class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
+                     طباعة وحفظ الفاتورة
+                    </a>
+
+            @endif
+        </div>
+    </div>
+    @else
+    <div class="lg:col-span-3 mt-5">
+        <div class="flex justify-end gap-3">
+            <button
+                wire:click="continueInvoice(true)"
+                type="button" class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
+                استمرار
+            </button>
+            <div class="flex justify-end gap-3">
+                <button
+                    wire:click="continueInvoice(false)"
+                    type="button" class="inline-flex items-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
+                    فاتورة جديدة
                 </button>
+                <p class="text-gray-500 " style="font-size: 20px;">العميل متبقى عليه اموال هل تريد الاستمرار في عمل الفاتورة؟</p>
             </div>
         </div>
+        @endif
+
 
 
     </div>
     @if (session()->has('message'))
     <div class="bg-success/25 text-success text-center text-xl rounded-md p-4 mt-5" role="alert" style="width: 75%;">
-        <span class="font-bold text-lg"></span> تم اضافة العميل بنجاح
+        <span class="font-bold text-lg"></span> تم الحفظ بنجاح
     </div>
     @endif
+    @if (session()->has('balance'))
+    <div class="bg-warning/25 text-success text-center text-xl rounded-md p-4 mt-5" role="alert" style="width: 75%;">
+        <span class="font-bold text-lg"></span> {{ session('balance') }}
+    </div>
+    @endif
+
 </main>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const productList = document.getElementById('product-list');
-        const productItems = productList.querySelectorAll('.product-item');
 
-        productItems.forEach(item => {
-            item.addEventListener('click', function() {
-                // Remove the unique class from all items
-                productItems.forEach(product => product.classList.remove('active-product'));
 
-                // Add the unique class to the clicked item
-                this.classList.add('active-product');
-            });
-        });
-    });
-</script>
+
+

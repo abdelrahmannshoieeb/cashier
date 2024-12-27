@@ -54,7 +54,7 @@
                     </div>
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">المبلغ</label>
-                        <input wire:model="amount" type="text" id="simpleinput" class="form-input">
+                        <input wire:model="amount" type="number" id="simpleinput" class="form-input">
                     </div>
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">ملاحظات</label>

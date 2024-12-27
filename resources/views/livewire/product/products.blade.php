@@ -14,7 +14,7 @@
                     <button type="button" wire:click="thesearch" class="btn bg-info text-white" style="margin:10px">ابحث</button>
                     <button type="button" wire:click="viewAll" class="btn bg-dark text-white" style="margin:10px"> الكل</button>
                     <div style="width: 450px;" x-data="{ open: false }" class="relative">
-                    <button wire:click="alerted" type="button" class="btn bg-info text-white">عرض منتجات اقتربت على الانتهاء</button>
+                        <button wire:click="alerted" type="button" class="btn bg-info text-white">عرض منتجات اقتربت على الانتهاء</button>
                     </div>
                     <div style="width: 300px;" x-data="{ open: false }" class="relative">
                         <button @click="open = !open" type="button" class="py-2 px-3 inline-flex bg-success text-white justify-center items-center text-sm gap-2 rounded-md font-medium shadow-sm align-middle transition-all">
@@ -22,7 +22,7 @@
                         </button>
 
                         <div x-show="open" @click.outside="open = false" class="absolute mt-2 z-50 bg-white border shadow-md rounded-lg p-2 dark:bg-slate-800 dark:border-slate-700 transition-all duration-300">
-                            <a wire:click="stockFilter (1, 100); open = false "; open = false"
+                            <a wire:click="stockFilter (1, 100); open = false " ; open=false"
                                 class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
                                 من 1 ل 100
                             </a>
@@ -32,15 +32,15 @@
                             </a>
                             <a wire:click="stockFilter (200, 300); open = false "
                                 class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
-                                من 200 ل 300   
+                                من 200 ل 300
                             </a>
                             <a wire:click="stockFilter (300, 400); open = false "
                                 class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
-                                من 300 ل 400   
+                                من 300 ل 400
                             </a>
                             <a wire:click="stockFilter (400, 5000); open = false "
                                 class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
-                                اكثر من 400   
+                                اكثر من 400
                             </a>
                         </div>
                     </div>
@@ -51,8 +51,8 @@
 
                         <div x-show="open" @click.outside="open = false" class="absolute mt-2 z-50 bg-white border shadow-md rounded-lg p-2 dark:bg-slate-800 dark:border-slate-700 transition-all duration-300">
                             @foreach ($categories as $category )
-                                
-                            <a wire:click="categoryFilter ({{$category->id}}); open = false "; open = false"
+
+                            <a wire:click="categoryFilter ({{$category->id}}); open = false " ; open=false"
                                 class="flex items-center py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
                                 {{ $category->name }}
                             </a>
@@ -82,7 +82,7 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach($products as $product)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200  text-center">{{ $product->id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200  text-center">#{{ $product->id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200   text-center" style="font-size: larger; font-weight: bolder">{{ $product->name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200   text-center" style="font-size: larger; font-weight: bolder">
                                 <ul>
@@ -129,9 +129,33 @@
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                <a class="text-danger hover:text-sky-700 mt-5 " href="#" style="font-size: larger; font-weight: bolder;" wire:click="delete({{$product->id }})">مسح</a><br>
+                                <button type="button" class="text-danger hover:text-sky-700 mt-5 " data-fc-target="default-modal" data-fc-type="modal" type="button" style="font-size: larger; font-weight: bolder;">مسح</button><br>
+                                <div id="default-modal" class="w-full h-full mt-5 fixed top-0 left-0 z-50 transition-all duration-500 fc-modal hidden">
+                                    <div class="fc-modal-open:opacity-100 duration-500 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto flex flex-col bg-white border shadow-sm rounded-md dark:bg-slate-800 dark:border-gray-700">
+                                        <div class="flex justify-between items-center py-2.5 px-4 border-b dark:border-gray-700">
+                                            <h3 class="font-medium text-gray-800 dark:text-white text-lg">
+                                                Modal Title
+                                            </h3>
+                                            <button class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 dark:text-gray-200"
+                                                data-fc-dismiss type="button">
+                                                <span class="material-symbols-rounded">close</span>
+                                            </button>
+                                        </div>
+                                        <div class="px-4 py-8 overflow-y-auto">
+                                            <p class="text-gray-800 dark:text-gray-200">
+                                                هل انت متاكد من حذف المنتج
+                                            </p>
+                                        </div>
+                                        <div class="flex justify-end items-center gap-4 p-4 border-t dark:border-slate-700">
+                                            <button class="btn dark:text-gray-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 hover:dark:bg-slate-700 transition-all" data-fc-dismiss type="button">الغاء </button>
+                                            <button class="btn text-white font-bold border border-slate-200 dark:border-slate-700 hover:bg-red-600 hover:dark:bg-red-700 transition-all" data-fc-dismiss type="button" wire:click="delete({{$product->id }})" style="background-color: red;">حذف</button>
+                                            </div>
+                                    </div>
+                                </div>
                                 <a class="text-primary hover:text-sky-700" href="{{ route('editProduct', $product->id) }}" style="font-size: larger; font-weight: bolder">تعديل</a>
                             </td>
+
+
                         </tr>
                         @endforeach
                     </tbody>

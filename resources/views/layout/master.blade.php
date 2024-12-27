@@ -70,7 +70,7 @@
 
 
             <!-- Footer Start -->
-            <footer class="footer h-16 flex items-center px-6 bg-white shadow dark:bg-gray-800">
+            <!-- <footer class="footer h-16 flex items-center px-6 bg-white shadow dark:bg-gray-800">
                 <div class="flex justify-center w-full gap-4">
                     <div>
                         <script>
@@ -78,7 +78,7 @@
                         </script> z  - <a href="https://coderthemes.com/" target="_blank">for software services</a>
                     </div>
                 </div>
-            </footer>
+            </footer> -->
             <!-- Footer End -->
 
         </div>

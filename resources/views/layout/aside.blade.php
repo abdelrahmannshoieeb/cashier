@@ -35,6 +35,24 @@
                     <span class="menu-text font-bold"> اضافة فواتير </span>
                 </a>
             </li>
+            <li class="menu-item">
+                <a href="{{ route('unpaidInvoices')}}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_coupon_line"></i></span>
+                    <span class="menu-text font-bold">   الفواتير الاجله </span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="{{ route('partiallyPaid')}}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_coupon_line"></i></span>
+                    <span class="menu-text font-bold">   الفواتير المتبقي منها مبلغ </span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="{{ route('paidInvoices')}}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_coupon_line"></i></span>
+                    <span class="menu-text font-bold">   الفواتير المدفوعة بالكامل </span>
+                </a>
+            </li>
             
             <li class="menu-title"> التصنيفات والمنتجات</li>
     

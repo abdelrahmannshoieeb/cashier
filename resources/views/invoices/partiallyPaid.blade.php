@@ -6,7 +6,7 @@
 <div class="page-content">
 
 
-<livewire:invoice.add-invoice>
+<livewire:invoice.partially-paid>
 
 
 
@@ -14,4 +14,3 @@
 
 
 @endsection
-

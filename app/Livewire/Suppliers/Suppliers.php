@@ -19,7 +19,7 @@ class Suppliers extends Component
         $user = Supplier::find($id);
         
         if ($user) {
-            $user->delete();  // Delete the category
+            $user->delete();  
         }
     
         $this->suppliers = Supplier::all();

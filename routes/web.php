@@ -25,6 +25,8 @@ Route::middleware(['auth'])->group(function () {
     
     Route::view('/addWorker', 'workers.addWorker')->name('addWorker');
     Route::view('/workers', 'workers.workers')->name('workers');
+    Route::view('/editWorker/{id}', 'workers.editWorker')->name('editWorker');
+    
     Route::view('/boxControl', 'box.boxControl')->name('boxControl');
     Route::view('/boxoperations', 'box.boxoperations')->name('boxoperations');
     
@@ -42,6 +44,10 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/expenses', 'expense.expenses')->name('expenses');
 
     Route::view('/addInvoice', 'invoices.addInvoice')->name('addInvoice');
+    Route::view('/paidInvoices', 'invoices.paidInvoices')->name('paidInvoices');
+    Route::view('/unpaidInvoices', 'invoices.unpaidInvoices')->name('unpaidInvoices');
+    Route::view('/partiallyPaid', 'invoices.partiallyPaid')->name('partiallyPaid');
+    Route::view('/printer/{id}', 'invoices.printer')->name('printer');
 });
 
 Route::view('/login', 'Auth.login') ->name ('login');

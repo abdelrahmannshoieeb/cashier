@@ -52,7 +52,7 @@
 
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700 overflow-x-auto  style="width: 99%; >
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700 overflow-x-auto  style=" width: 99%;>
                             @foreach($suppliers as $supplly)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200 text-center">{{ $supplly->id }}</td>
@@ -71,18 +71,39 @@
                                     <li> <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-green-100 text-green-800">لا يوجد عنوان</span> </li>
                                 </td>
                                 @endif
-                             
-                              
+
+
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder">
                                     <li> <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">{{ $supplly->balance }}</span> </li>
                                 </td>
-                               
-                               
-                              
-                               
+
+
+
+
                                 <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                    <a class="text-danger hover:text-sky-700 mt-5 " href="#" style="font-size: larger; font-weight: bolder;" wire:click="delete({{$supplly->id }})">مسح</a><br>
-                                    <a class="text-primary hover:text-sky-700" href="#" style="font-size: larger; font-weight: bolder" wire:click="delete({{$supplly->id }})">تعديل</a>
+                                    <button type="button" class="text-danger hover:text-sky-700 mt-5 " data-fc-target="default-modal" data-fc-type="modal" type="button" style="font-size: larger; font-weight: bolder;">مسح</button><br>
+                                    <div id="default-modal" class="w-full h-full mt-5 fixed top-0 left-0 z-50 transition-all duration-500 fc-modal hidden">
+                                        <div class="fc-modal-open:opacity-100 duration-500 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto flex flex-col bg-white border shadow-sm rounded-md dark:bg-slate-800 dark:border-gray-700">
+                                            <div class="flex justify-between items-center py-2.5 px-4 border-b dark:border-gray-700">
+                                                <h3 class="font-medium text-gray-800 dark:text-white text-lg">
+                                                    Modal Title
+                                                </h3>
+                                                <button class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 dark:text-gray-200"
+                                                    data-fc-dismiss type="button">
+                                                    <span class="material-symbols-rounded">close</span>
+                                                </button>
+                                            </div>
+                                            <div class="px-4 py-8 overflow-y-auto">
+                                                <p class="text-gray-800 dark:text-gray-200">
+                                                    هل انت متاكد من حذف المورد
+                                                </p>
+                                            </div>
+                                            <div class="flex justify-end items-center gap-4 p-4 border-t dark:border-slate-700">
+                                                <button class="btn dark:text-gray-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 hover:dark:bg-slate-700 transition-all" data-fc-dismiss type="button">الغاء </button>
+                                                <button class="btn text-white font-bold border border-slate-200 dark:border-slate-700 hover:bg-red-600 hover:dark:bg-red-700 transition-all" data-fc-dismiss type="button" wire:click="delete({{$supplly->id }})" style="background-color: red;">حذف</button>
+                                            </div>
+                                        </div>
+                                    </div> <a class="text-primary hover:text-sky-700" href="#" style="font-size: larger; font-weight: bolder" wire:click="edit({{$supplly->id }})">تعديل</a>
                                 </td>
                             </tr>
                             @endforeach
