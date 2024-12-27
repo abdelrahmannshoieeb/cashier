@@ -184,26 +184,22 @@
             <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none">
                 الغاء
             </button>
-            @if ($invoice)
-            <a
+            <button
             style="cursor: pointer;"
-                wire:click="saveInvoice"
+            wire:click="saveInvoice"
                 type="button"
-                 href="{{ route('printer', $invoice->id) }}
-                 id="redirectButton" 
-                 class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
-                 طباعة وحفظ الفاتورة
-                </a>
-                @else
-                <a
-                    wire:click="saveInvoice"
-                    type="button"
-                    style="cursor: pointer;"
-                     id="redirectButton" 
-                     class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
-                     طباعة وحفظ الفاتورة
-                    </a>
-
+                id="redirectButton"
+                class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
+                طباعة وحفظ الفاتورة
+            </button>
+            @if ($invoice)
+                
+            <a
+            href="{{ route('printer', $invoice->id) }}"
+             type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none">
+                طباعة
+            </a>
+            
             @endif
         </div>
     </div>
@@ -241,8 +237,3 @@
     @endif
 
 </main>
-
-
-
-
-
