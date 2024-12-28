@@ -158,17 +158,28 @@
                     <div>
                         <label class="text-gray-800 text-sm font-medium mb-2 block">اختر السعر</label>
                         <select class="form-input" wire:model="sell_price">
+                            @if ($selectedProduct)
+                            @if ($selectedProduct->itemStock > 0)
                             <option value="{{ $selectedProduct->price1 }}">Price 1 ({{ $selectedProduct->price1 }})</option>
                             <option value="{{ $selectedProduct->price2 }}">Price 2 ({{ $selectedProduct->price2 }})</option>
                             <option value="{{ $selectedProduct->price3 }}">Price 3 ({{ $selectedProduct->price3 }})</option>
+                            @else
+                            @foreach ($selectedProduct->stock as $stock)
+                            <option value="{{ $stock->price }}">
+                                {{ __(' نوع المخزن') }} {{ $stock->type }} ({{ __(' سعر') }}: {{ $stock->price }})
+                            </option>
+                            @endforeach
+                            @endif
+                            @endif
                         </select>
+
                     </div>
                     @endif
 
 
                     @if (session()->has('quantityError'))
                     <div class="bg-danger/25 text-dark text-center text-xl rounded-md p-4 mt-5" role="alert" style="width: 75%;">
-                        <span class="font-bold text-lg"></span> {{ session('quantityError') }}
+                        <span class="font-bold text-lg"></span> {{ session('addItem') }}
                     </div>
                     @endif
                 </div>
@@ -185,21 +196,21 @@
                 الغاء
             </button>
             <button
-            style="cursor: pointer;"
-            wire:click="saveInvoice"
+                style="cursor: pointer;"
+                wire:click="saveInvoice"
                 type="button"
                 id="redirectButton"
                 class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
                 طباعة وحفظ الفاتورة
             </button>
             @if ($invoice)
-                
+
             <a
-            href="{{ route('printer', $invoice->id) }}"
-             type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none">
+                href="{{ route('printer', $invoice->id) }}"
+                type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none">
                 طباعة
             </a>
-            
+
             @endif
         </div>
     </div>

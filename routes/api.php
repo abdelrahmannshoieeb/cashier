@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ExpensesController;
+use App\Http\Controllers\InvoicController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
@@ -42,6 +43,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/suppliers', [SupplierController::class, 'getSuppliers']);
     Route::post('/addSupplier', [SupplierController::class, 'addSupplier']);
     Route::post('/addSupplierBond', [SupplierController::class, 'addSupplierBond']);
+
+    Route::get('searchProduct', [InvoicController::class, 'searchProduct']);
+    Route::get('searchCustomer', [InvoicController::class, 'searchCustomer']);
+    Route::post('/save-invoice', [InvoicController::class, 'saveInvoice']);
 
 });
 

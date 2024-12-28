@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Invoice_item;
 use App\Models\Product;
+use App\Models\Stock;
 use Livewire\Component;
 use SebastianBergmann\CodeCoverage\Report\Xml\Totals;
 
@@ -55,21 +56,59 @@ class AddInvoice extends Component
     public function addItem()
     {
         if ($this->selectedProduct) {
-            // Check if the quantity exceeds stock
-            if ($this->newItem['quantity'] > $this->selectedProduct->itemStock) {
-                // Set a flash message for the error
-                session()->flash('quantityError', 'المخزون به ' . $this->selectedProduct->itemStock . ' . الكمية المطلوبة تتجاوز المخزون.');
-                return; // Prevent adding the item
+            $requestedQuantity = $this->newItem['quantity'];
+            $remainingQuantity = $requestedQuantity;
+            $availableQuantity = $this->selectedProduct->itemStock;
+            $stockMessages = [];
+    
+            // Step 1: Check if requested quantity can be fulfilled from itemStock
+            if ($availableQuantity >= $remainingQuantity) {
+                $stockMessages[] = 'تم استخدام المخزون الأساسي.';
+                $remainingQuantity = 0;
+            } else {
+                // Not enough in itemStock
+                $stockMessages[] = 'تم استخدام المخزون الأساسي بالكامل (' . $availableQuantity . ').';
+                $remainingQuantity -= $availableQuantity;
+    
+                $stocks = Stock::where('product_id', $this->selectedProduct->id)
+                    ->orderBy('type') // Order stocks by type (1, 2, 3, 4)
+                    ->get();
+    
+                foreach ($stocks as $stock) {
+                    if ($remainingQuantity <= $stock->quantity) {
+                        // Enough in this stock type to fulfill the rest of the request
+                        $stockMessages[] = 'تم استخدام مخزون النوع ' . $stock->type . ' (' . $remainingQuantity . ').';
+                        $remainingQuantity = 0;
+                        break; // Stop further processing
+                    } else {
+                        // Use all from this stock type
+                        $stockMessages[] = 'تم استخدام مخزون النوع ' . $stock->type . ' بالكامل (' . $stock->quantity . ').';
+                        $remainingQuantity -= $stock->quantity;
+                    }
+                }
+    
+                if ($remainingQuantity > 0) {
+                    // Not enough in all stocks combined
+                    $stockMessages[] = 'الكمية المطلوبة أكبر من المتوفر. تم استخدام المتوفر فقط (' . ($requestedQuantity - $remainingQuantity) . '). الباقي ' . $remainingQuantity . ' سيتم إضافته إلى الفاتورة القادمة.';
+                    session()->flash('quantityError', implode(' ', $stockMessages));
+                    return; // Prevent adding the item
+                }
             }
     
+            // Add item to the list if all validations pass
             $this->items[] = [
                 'name' => $this->selectedProduct->name,
-                'quantity' => $this->newItem['quantity'], // Default quantity
+                'quantity' => $requestedQuantity - $remainingQuantity, // Fulfilled quantity
                 'calculated_price' => $this->sell_price, // Use sell_price
                 'id' => $this->selectedProduct->id,
             ];
+    
+            // Flash all stock messages
+            session()->flash('addItem', implode(' ', $stockMessages));
         }
     }
+    
+    
     
 
     public function updateQuantity($index, $quantity)
@@ -83,13 +122,19 @@ class AddInvoice extends Component
 
     public function selectProduct($productId)
     {
-        $this->selectedProduct = Product::find($productId);
-
+        $this->selectedProduct = Product::with('stock')->find($productId); // Eager load stocks relationship
+    
         if ($this->selectedProduct) {
-            // Set default sell_price to price1
-            $this->sell_price = $this->selectedProduct->price1;
+            if ($this->selectedProduct->itemStock > 0) {
+                $this->sell_price = $this->selectedProduct->price1; // Default to Price 1 for basic stock
+            } else {
+                // Default to the price of the first available stock
+                $firstAvailableStock = $this->selectedProduct->stock->first();
+                $this->sell_price = $firstAvailableStock ? $firstAvailableStock->price : null;
+            }
         }
     }
+    
 
 
     private function resetNewItem()
@@ -142,6 +187,11 @@ class AddInvoice extends Component
             return $item['quantity'] * $item['calculated_price'] - $this->discount;
         });
         
+        if($this->customerType == false) {
+            $this->customerType = 'unattached';
+        }
+
+        // dd($this->customerType);
         
         if ($this->customerType === 'attached') {
             $customer = Customer::find($this->selectedCustomerId);
@@ -194,14 +244,45 @@ class AddInvoice extends Component
                 'product_id' => $item['id'],
                 'invoice_id' => $invoice->id,
             ]);
-    
-            // Subtract quantity from stock
+        
+            $remainingQty = $item['quantity']; // The quantity to be subtracted
             $product = Product::find($item['id']);
+        
             if ($product) {
-                $product->itemStock -= $item['quantity'];
-                $product->save();
+                if ($product->itemStock >= $remainingQty) {
+                    $product->itemStock -= $remainingQty;
+                    $product->save();
+                    $remainingQty = 0; // All quantity has been subtracted
+                } else {
+                    $remainingQty -= $product->itemStock; // Remaining quantity to subtract
+                    $product->itemStock = 0; // Deplete basic stock
+                    $product->save();
+                }
+        
+                if ($remainingQty > 0) {
+                    $stocks = Stock::where('product_id', $item['id'])
+                        ->orderBy('type') // Order by type (1, 2, 3, 4)
+                        ->get();
+        
+                    foreach ($stocks as $stock) {
+                        if ($stock->quantity >= $remainingQty) {
+                            $stock->quantity -= $remainingQty;
+                            $stock->save();
+                            $remainingQty = 0; // All quantity has been subtracted
+                            break; // Exit the loop
+                        } else {
+                            $remainingQty -= $stock->quantity; // Subtract the available quantity
+                            $stock->quantity = 0; // Deplete this stock
+                            $stock->save();
+                        }
+                    }
+                }
+            }
+            if ($remainingQty > 0) {
+                throw new \Exception("Insufficient stock for product ID: {$item['id']}");
             }
         }
+        
 
 
         $this->reset(['items', 'payMethod', 'payedAmount', 'notes', 'discount', 'status', 'customer_id']);

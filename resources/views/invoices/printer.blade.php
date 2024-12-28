@@ -103,24 +103,24 @@
         <table style="width: 100%; text-align: right; border-collapse: collapse; font-size: 14px;">
             <thead>
                 <tr>
-                    <th style="border-bottom: 1px solid #ddd; padding: 5px;">الاسم</th>
-                    <th style="border-bottom: 1px solid #ddd; padding: 5px;">الكمية</th>
-                    <th style="border-bottom: 1px solid #ddd; padding: 5px;">سعر البيع</th>
+                    <th style="border-bottom: 1px solid #ddd; padding: 5px;" class="text-center">الاسم</th>
+                    <th style="border-bottom: 1px solid #ddd; padding: 5px;" class="text-center">الكمية</th>
+                    <th style="border-bottom: 1px solid #ddd; padding: 5px;" class="text-center">سعر البيع</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($invoice->items as $item)
                 <tr>
-                    <td style="padding: 5px;">{{ $item->product->name }}</td>
-                    <td style="padding: 5px;">{{ $item->qty }}</td>
-                    <td style="padding: 5px;">{{ $item->sellPrice }}</td>
+                    <td style="padding: 5px;" class="text-center">{{ $item->product->name }}</td>
+                    <td style="padding: 5px;" class="text-center">{{ $item->qty }}</td>
+                    <td style="padding: 5px;" class="text-center">{{ $item->sellPrice }}</td>
                 </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="2" style="font-weight: bold; text-align: left; padding: 5px;">الإجمالي</td>
-                    <td style="padding: 5px;">{{ $invoice->total }}</td>
+                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;">الإجمالي</td>
+                    <td style="padding: 5px;" class="text-center">{{ $invoice->total }}</td>
                 </tr>
                 @if($invoice->discount)
 
