@@ -41,6 +41,7 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase   text-center" style="font-size: larger; font-weight: bolder"> طريقة الدفع </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase   text-center" style="font-size: larger; font-weight: bolder"> الخصم</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase   text-center" style="font-size: larger; font-weight: bolder"> نوع العميل</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase   text-center" style="font-size: larger; font-weight: bolder"> التاريخ </th>
                             <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase   text-center" style="font-size: larger; font-weight: bolder">عمليات</th>
                         </tr>
                     </thead>
@@ -114,6 +115,10 @@
                             @else
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200   text-center" style="font-size: larger; font-weight: bolder">عميل غير دائم</td>
                             @endif
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder">
+                                {{ $invoice->created_at->format('d-m-Y') }} <br>
+                                {{ $invoice->created_at->format('H:i') }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                                 <button type="button" class="text-danger hover:text-sky-700 mt-5 " data-fc-target="default-modal" data-fc-type="modal" type="button" style="font-size: larger; font-weight: bolder;">مسح</button><br>
                                 <div id="default-modal" class="w-full h-full mt-5 fixed top-0 left-0 z-50 transition-all duration-500 fc-modal hidden">
@@ -135,7 +140,7 @@
                                         <div class="flex justify-end items-center gap-4 p-4 border-t dark:border-slate-700">
                                             <button class="btn dark:text-gray-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 hover:dark:bg-slate-700 transition-all" data-fc-dismiss type="button">الغاء </button>
                                             <button class="btn text-white font-bold border border-slate-200 dark:border-slate-700 hover:bg-red-600 hover:dark:bg-red-700 transition-all" data-fc-dismiss type="button" wire:click="delete({{$invoice->id }})" style="background-color: red;">حذف</button>
-                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <a class="text-primary hover:text-sky-700" href="" style="font-size: larger; font-weight: bolder">تعديل</a>

@@ -20,4 +20,9 @@ class Invoice_item extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function refuneditem()
+    {
+        return $this->hasOne(Refundeditem::class);
+    }
 }

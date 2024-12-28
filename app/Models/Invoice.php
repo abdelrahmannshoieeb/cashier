@@ -19,4 +19,16 @@ class Invoice extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+
+    public function refundsInitiated()
+    {
+        return $this->hasMany(Refunded::class, 'current_invoice_id');
+    }
+
+
+    public function refundsReceived()
+    {
+        return $this->hasMany(Refunded::class, 'refunded_invoice_id');
+    }
 }

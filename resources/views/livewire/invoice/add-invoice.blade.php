@@ -186,6 +186,86 @@
 
 
 
+                <div>
+                    <div class=" gap-3 mt-6">
+                        <div class="flex">
+                            <input class="form-switch" type="checkbox" id="flexSwitchCheck" wire:click="toggleRefundSection">
+                            <label class="ms-1.5" for="flexSwitchCheck"></label>
+                        </div>
+                        <label class="text-gray-800 text-sm font-medium">
+                            {{ !$showRefundSection ? 'اظخهر قسم المترجع' : 'اخفي قسم المرتجع' }}
+                        </label>
+
+                        @if ($showRefundSection)
+                        <div class="relative max-w-l flex items-center gap-3 mb-6">
+                            <input type="text" id="search-customer" class="form-input ps-11" placeholder="ابحث برقم الفاتورة"
+                                wire:model="invoice_search">
+                            <button class="btn bg-info text-white" wire:click="serachInvoice">ابحث</button>
+                        </div>
+                        @endif
+
+
+                        @if ($invoices)
+                        <table class="w-full border-collapse border border-gray-300 mb-6">
+                            <thead>
+                                <tr>
+                                    <th class="border border-gray-300 px-4 py-2">اسم المنتج</th>
+                                    <th class="border border-gray-300 px-4 py-2">الكمية</th>
+                                    <th class="border border-gray-300 px-4 py-2">السعر</th>
+                                    <th class="border border-gray-300 px-4 py-2">الإجمالي</th>
+                                    <th class="border border-gray-300 px-4 py-2">إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @if ($invoice_search_items)
+                                @foreach ($invoice_search_items as $item)
+                                <tr>
+                                    <td class="border border-gray-300 px-4 py-2">{{ $item->product_id }}</td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <input
+                                            type="number"
+                                            class="form-input"
+                                            wire:model.defer="refundQuantities.{{ $item->id }}"
+                                            value="{{ $item->qty }}"
+                                            min="1" max="{{ $item->qty }}" />
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">{{ $item->sellPrice }}</td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        {{ (int)$item->qty * (float)$item->sellPrice }}
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">
+                                        <button
+                                            class="btn bg-info text-white"
+                                            wire:click="refundItem({{ $item->id }})">
+                                            استرداد
+                                        </button>
+                                        <button
+                                            class="btn bg-info text-white"
+                                            wire:click="refundInvoice({{ $item->id }})">
+                                            استرداد الفاتورة بالكامل
+                                        </button>
+                                    </td>
+                                </tr>
+                                @endforeach
+                                @endif
+
+                                <tr>
+                                    <td class="px-4 py-2 font-bold" colspan="3">الإجمالي</td> <!-- Merge cells and bold text -->
+                                    <td class="px-4 py-2 text-right">
+                                        {{ number_format(collect($items)->sum(function ($item) {
+            return (float)$item->qty * (float)$item->sellPrice;
+        }), 2) }}
+                                    </td>
+                                </tr>
+
+
+
+                            </tbody>
+                        </table>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
     </div>

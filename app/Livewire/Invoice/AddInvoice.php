@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Invoice_item;
 use App\Models\Product;
+use App\Models\Refunded;
 use App\Models\Stock;
 use Livewire\Component;
 use SebastianBergmann\CodeCoverage\Report\Xml\Totals;
@@ -53,6 +54,12 @@ class AddInvoice extends Component
     public $invoice;
 
 
+
+    // refund
+    public $showRefundSection = 0;
+    public $invoices;
+    public $invoice_search;
+    public $invoice_search_items;
     public function addItem()
     {
         if ($this->selectedProduct) {
@@ -350,6 +357,37 @@ class AddInvoice extends Component
         }
     }
     
+
+
+    public function toggleRefundSection(){
+        $this->showRefundSection = !$this->showRefundSection;
+    }
+
+    public function serachInvoice()
+    {
+
+        if ($this->invoice_search) {
+            $this->invoices = Invoice::where('id', 'like', '%' . $this->invoice_search . '%')->with('items.product')->first();
+        }
+        
+        if ($this->invoices) {
+            $this->invoice_search_items = $this->invoices->items;
+        }
+        
+
+        // dd($this->invoice_search_items);
+        
+    }
+
+    public function refundInvoice($itemId){
+       $item = Invoice_item::find($itemId);
+       $invoiceRefunded = Invoice::find($item->invoice_id);
+        $refund = Refunded::create([
+            'current_invoice_id' => $this->invoice->id,
+            'refunded_invoice_id' => $invoiceRefunded,
+            'refund_amount' => $this->invoice->total
+        ]);
+    }
     public function render()
     {
         return view('livewire.invoice.add-invoice');
