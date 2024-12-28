@@ -179,7 +179,7 @@
 
                     @if (session()->has('quantityError'))
                     <div class="bg-danger/25 text-dark text-center text-xl rounded-md p-4 mt-5" role="alert" style="width: 75%;">
-                        <span class="font-bold text-lg"></span> {{ session('addItem') }}
+                        <span class="font-bold text-lg"></span> {{ session('quantityError') }}
                     </div>
                     @endif
                 </div>

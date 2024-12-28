@@ -5,14 +5,14 @@
     <a href="index.html" class="logo-box">
         <!-- Light Brand Logo -->
         <div class="logo-light">
-            <img src="{{ asset('assets/images/logo.png') }}" class="logo-lg h-6" alt="Light logo">
-            <img src="{{ asset('assets/images/logo-sm.png') }}" class="logo-sm" alt="Small logo">
+            <img src="{{ asset('assets/aboelmagdlogo.jpg') }}" style="width: 60px; height: 60px;" class="logo-lg h-6" alt="Light logo">
+            <img src="{{ asset('assets/aboelmagdlogo.jpg') }}" style="width: 60px; height: 60px;" class="logo-sm" alt="Small logo">
         </div>
 
         <!-- Dark Brand Logo -->
         <div class="logo-dark">
-            <img src="{{ asset('assets/images/logo-dark.png') }}" class="logo-lg h-6" alt="Dark logo">
-            <img src="{{ asset('assets/images/logo-dark-sm.png') }}" class="logo-sm" alt="Small logo">
+            <img src="{{ asset('assets/aboelmagdlogo.jpg') }}" style="width: 60px; height: 60px;" class="logo-lg h-6" alt="Dark logo">
+            <img src="{{ asset('assets/aboelmagdlogo.jpg') }}" style="width: 60px; height: 60px;" class="logo-sm" alt="Small logo">
         </div>
     </a>
 
