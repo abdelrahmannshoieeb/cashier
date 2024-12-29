@@ -18,7 +18,8 @@
                         @if ($customerType === 'attached')
                         <input type="text" id="search-customer" class="form-input ps-11" placeholder="ابحث عن عميل"
                             wire:model="searchCustomer">
-                        <button class="btn bg-info text-white" wire:click="thesearchCustomer">ابحث</button>
+                        <button class="btn bg-info text-white" wire:click="thesearchCustomer"> ابحث</button>
+                        <label for="" style="font-size: 18px; text-align: center;"> اضغط على العميل لبدا الفاتورة</label>
                         @else
                         <input type="text" id="customer-name" class="form-input" placeholder="اسم العميل"
                             wire:model="customerName">

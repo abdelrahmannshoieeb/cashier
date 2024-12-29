@@ -12,20 +12,41 @@ use Illuminate\Support\Facades\Validator;
 
 class InvoicController extends Controller
 {
-    public function searchProduct(Request $request){
-        $product = Product::where('name', 'like', '%' . $request->search . '%')
-        ->with(['stock' => function ($query) {
-            $query->select('product_id', 'type', 'price', 'quantity');
-        }])
-        ->get();
-
-        
+    public function searchProduct(Request $request)
+    {
+        $products = Product::where('name', 'like', '%' . $request->search . '%')->with('stock')->get();
+    
+        $transformedProducts = $products->map(function ($product) {
+            // Filter stocks with quantity not equal to 1
+            $filteredStocks = $product->stock->filter(function ($stock) {
+                return $stock->quantity != 0;
+            });
+    
+            // Create separate fields for each stock type if it exists
+            $stockData = [];
+            foreach ($filteredStocks as $stock) {
+                $stockData['stockType_' . $stock->type] = [
+                    'price' => $stock->price,
+                    'quantity' => $stock->quantity,
+                ];
+            }
+    
+            // Exclude the 'stock' relation and return the transformed data
+            $productData = $product->toArray();
+            unset($productData['stock']); // Remove the stock relation
+    
+            return array_merge($productData, $stockData);
+        });
     
         return response()->json([
             'success' => true,
-            'data' => $product
+            'data' => $transformedProducts
         ], 200);
     }
+    
+    
+
+
     public function searchCustomer(Request $request){
         $customer = Customer::where('name', 'like', '%' . $request->search . '%')
        
