@@ -46,8 +46,12 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/addInvoice', 'invoices.addInvoice')->name('addInvoice');
     Route::view('/paidInvoices', 'invoices.paidInvoices')->name('paidInvoices');
     Route::view('/unpaidInvoices', 'invoices.unpaidInvoices')->name('unpaidInvoices');
+    Route::view('/invoiceRefunded', 'invoices.invoiceRefunded')->name('invoiceRefunded');
     Route::view('/partiallyPaid', 'invoices.partiallyPaid')->name('partiallyPaid');
     Route::view('/printer/{id}', 'invoices.printer')->name('printer');
+
+
+    Route::view('/earning', 'money.earnings')->name('earning');
 });
 
 Route::view('/login', 'Auth.login') ->name ('login');

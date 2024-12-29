@@ -57,9 +57,15 @@ class AddInvoice extends Component
 
     // refund
     public $showRefundSection = 0;
+    public $showTotalMessage = 0;
     public $invoices;
     public $invoice_search;
     public $invoice_search_items;
+
+    public function mount (){
+        $this->showRefundSection = false;
+        $this->showTotalMessage = false;
+    }
     public function addItem()
     {
         if ($this->selectedProduct) {
@@ -188,11 +194,17 @@ class AddInvoice extends Component
 
     public function saveInvoice()
     {
+        $this->total = is_numeric($this->total) ? (float) $this->total : 0.0;
+$this->payedAmount = is_numeric($this->payedAmount) ? (float) $this->payedAmount : 0.0;
+$this->discount = is_numeric($this->discount) ? (float) $this->discount : 0.0;
+
+
         // dd([$this->items , $this->payMethod , $this->payedAmount , $this->notes , $this->discount , $this->status , $this->customerType , $this->customerName , $this->customer_id]);
         // Calculate total
         $this->total = collect($this->items)->sum(function ($item) {
-            return $item['quantity'] * $item['calculated_price'] - $this->discount;
+            return ($item['quantity'] * $item['calculated_price']) - (float) $this->discount;
         });
+        
         
         if($this->customerType == false) {
             $this->customerType = 'unattached';
@@ -202,8 +214,11 @@ class AddInvoice extends Component
         
         if ($this->customerType === 'attached') {
             $customer = Customer::find($this->selectedCustomerId);
-            $customer->balance = $customer->balance - $this->total + $this->payedAmount+$this->discount;
-            $customer->save();
+            $customer->balance = (float) $customer->balance 
+            - (float) $this->total 
+            + (float) $this->payedAmount 
+            + (float) $this->discount;
+                    $customer->save();
         }
         
         if ($this->customerType === 'attached' &&  $customer->balance > $customer->balance - $this->total + $this->payedAmount+$this->discount ) {
@@ -305,6 +320,8 @@ class AddInvoice extends Component
         ];
 
         session()->flash('message', 'Invoice created successfully.');
+        $this->showRefundSection = !$this->showRefundSection;
+
     }
 
     public function thesearch()
@@ -367,8 +384,11 @@ class AddInvoice extends Component
     {
 
         if ($this->invoice_search) {
-            $this->invoices = Invoice::where('id', 'like', '%' . $this->invoice_search . '%')->with('items.product')->first();
-        }
+            $this->invoices = Invoice::where('id', 'like', '%' . $this->invoice_search . '%')
+            ->where('status', '!=', 'refunded') // Exclude refunded status
+            ->with('items.product')
+            ->first();
+                }
         
         if ($this->invoices) {
             $this->invoice_search_items = $this->invoices->items;
@@ -382,11 +402,21 @@ class AddInvoice extends Component
     public function refundInvoice($itemId){
        $item = Invoice_item::find($itemId);
        $invoiceRefunded = Invoice::find($item->invoice_id);
-        $refund = Refunded::create([
-            'current_invoice_id' => $this->invoice->id,
-            'refunded_invoice_id' => $invoiceRefunded,
-            'refund_amount' => $this->invoice->total
-        ]);
+       
+
+        if($this->total){
+
+            $this->total = $this->total - $invoiceRefunded->items->map(function ($item) {
+                return (float) $item->sellPrice * (float) $item->qty;
+            })->sum();
+            $this->invoice->total = $this->total;
+            $this->invoice->save();
+        }
+        $this->showTotalMessage = true;
+       $invoiceRefunded->status = 'refunded';
+       $this->still = $this->total - $this->payedAmount;
+       $invoiceRefunded->save();
+       
     }
     public function render()
     {

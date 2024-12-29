@@ -221,7 +221,7 @@
                                 @if ($invoice_search_items)
                                 @foreach ($invoice_search_items as $item)
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2">{{ $item->product_id }}</td>
+                                    <td class="border border-gray-300 px-4 py-2">{{ $item->product->name }}</td>
                                     <td class="border border-gray-300 px-4 py-2">
                                         <input
                                             type="number"
@@ -252,17 +252,18 @@
 
                                 <tr>
                                     <td class="px-4 py-2 font-bold" colspan="3">الإجمالي</td> <!-- Merge cells and bold text -->
-                                    <td class="px-4 py-2 text-right">
-                                        {{ number_format(collect($items)->sum(function ($item) {
-            return (float)$item->qty * (float)$item->sellPrice;
-        }), 2) }}
-                                    </td>
+                                   
                                 </tr>
 
 
 
                             </tbody>
                         </table>
+                        @endif
+                        @if ($showTotalMessage && $total)
+                        <div class="bg-success/25 text-success text-center text-xl rounded-md p-4 mt-5" role="alert" style="width: 75%;">
+                            <span class="font-bold text-lg"></span> الاجمالي : {{ $total }}
+                        </div>
                         @endif
                     </div>
                 </div>
@@ -284,13 +285,11 @@
                 طباعة وحفظ الفاتورة
             </button>
             @if ($invoice)
-
             <a
                 href="{{ route('printer', $invoice->id) }}"
                 type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none">
                 طباعة
             </a>
-
             @endif
         </div>
     </div>
