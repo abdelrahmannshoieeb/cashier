@@ -144,7 +144,7 @@
                                             </div>
                                     </div>
                                 </div>
-                                <a class="text-primary hover:text-sky-700" href="" style="font-size: larger; font-weight: bolder">تعديل</a>
+                                <a class="text-primary hover:text-sky-700" href="{{ route('printer', $invoice->id) }}" style="font-size: larger; font-weight: bolder">اعد طباعة الفاتورة</a>
                             </td>
                         </tr>
                         @endforeach

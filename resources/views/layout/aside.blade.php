@@ -65,6 +65,12 @@
                     <span class="menu-text font-bold">   تقارير المال </span>
                 </a>
             </li>
+            <li class="menu-item">
+                <a href="{{ route('sellers')}}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_coupon_line"></i></span>
+                    <span class="menu-text font-bold">   تقارير المبيعات </span>
+                </a>
+            </li>
             
             <li class="menu-title"> التصنيفات والمنتجات</li>
     

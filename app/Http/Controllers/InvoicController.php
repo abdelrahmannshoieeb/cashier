@@ -80,6 +80,7 @@ class InvoicController extends Controller
             'customerName' => 'required_if:customerType,unattached|string',
             'selectedCustomerId' => 'required_if:customerType,attached|exists:customers,id',
             'notes' => 'nullable|string',
+            'user_id' => 'required|exists:users,id',
         ]);
 
         // Handle validation errors
@@ -99,6 +100,7 @@ class InvoicController extends Controller
         $customerName = $request->input('customerName');
         $selectedCustomerId = $request->input('selectedCustomerId');
         $notes = $request->input('notes');
+        $user_id = $request->input('user_id');
 
         // Calculate total
         $total = collect($items)->sum(function ($item) use ($discount) {
@@ -137,6 +139,7 @@ class InvoicController extends Controller
             'customerName' => $customerName,
             'customer_id' => $selectedCustomerId,
             'still' => $still,
+            'user_id' => $user_id
         ]);
 
         foreach ($items as $item) {

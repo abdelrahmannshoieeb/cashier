@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::view('/earning', 'money.earnings')->name('earning');
+    Route::view('/sellers', 'money.sellers')->name('sellers');
 });
 
 Route::view('/login', 'Auth.login') ->name ('login');

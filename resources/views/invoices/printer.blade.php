@@ -73,6 +73,10 @@
     @php
     $id = request()->segment(2);
     $invoice = \App\Models\Invoice::find($id);
+
+    $refunded = \App\Models\Refunded::where('current_invoice_id', $id)->first();
+
+    $user = \App\Models\User::find($invoice->user_id);
     @endphp
     <h1 class="text-center">محلات ابو المجد</h1>
 
@@ -88,15 +92,19 @@
             مدفوعة
             @elseif($invoice->status === 'unpaid')
             غير مدفوعة
-            @elseif($invoice->status === 'partially_paid')
-            مدفوعة جزئيًا - المبلغ المتبقي: {{ $invoice->total - $invoice->payedAmount }}
+            @elseif($invoice->status === 'partiallyPaid')
+            غير مدفوعة بالكامل - المبلغ المتبقي: {{ $invoice->total - $invoice->payedAmount }}
             @endif
         </p>
         <p>المبلغ المدفوع: {{ $invoice->payedAmount }}</p>
         @if($invoice->notes)
         <p>ملاحظات: {{ $invoice->notes }}</p>
         @endif
-
+        @if ($user->role === 'admin')
+        <p>  منفذ الفاتورة صاحب المحل</p>
+        @else
+        <p> :منفذ الفاتورة {{ $user->name }}</p>
+        @endif
     </div>
 
     <div class="invoice-items">
@@ -118,12 +126,29 @@
                 @endforeach
             </tbody>
             <tfoot>
+                @if ($refunded)
                 <tr>
-                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;">الإجمالي</td>
+                    @php
+                    $refundedMoney = \App\Models\Invoice::find($refunded->refunded_invoice_id)->total; ;
+                    @endphp
+                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;">المرتجع</td>
+                    <td style="padding: 5px;" class="text-center">{{ $refundedMoney }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;"> الاجمالي قبل المرتجع</td>
+                    <td style="padding: 5px;" class="text-center">{{ $invoice->total + $refundedMoney }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;"> الاجمالي بعد المرتجع</td>
                     <td style="padding: 5px;" class="text-center">{{ $invoice->total }}</td>
                 </tr>
+                @else
+                <tr>
+                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;"> الإجمالي</td>
+                    <td style="padding: 5px;" class="text-center">{{ $invoice->total }}</td>
+                </tr>
+                @endif
                 @if($invoice->discount)
-
                 <tr>
                     <td colspan="2" style="font-weight: bold; text-align: left; padding: 5px;">الخصم</td>
                     <td style="padding: 5px;">{{ $invoice->discount }}</td>
@@ -138,7 +163,7 @@
     </div>
     <hr class="margin0">
     <p class="text-center margin0">السعر شامل الضريبة</p>
-    <p class="text-center font-bold margin0">العنوان : العتبة محلات ابو المجد</p>
+    <p class="text-center font-bold margin0">العنوان : مسطرد محلات ابو المجد</p>
     <p class="text-center font-bold margin0">رقم الجوال : 01102102007</p>
     <p class="text-center">تم التطوير بواسطة <strong>Nexoria للبرمجيات</strong></p>
 

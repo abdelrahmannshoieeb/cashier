@@ -20,9 +20,13 @@
                             wire:model="searchCustomer">
                         <button class="btn bg-info text-white" wire:click="thesearchCustomer"> ابحث</button>
                         <label for="" style="font-size: 18px; text-align: center;"> اضغط على العميل لبدا الفاتورة</label>
+                        @if (!$customer_id)
+                        @error('customer_id') <span class="text-danger"> اختر عميل لانشاء الفاتورة </span>@enderror
+                        @endif
                         @else
                         <input type="text" id="customer-name" class="form-input" placeholder="اسم العميل"
                             wire:model="customerName">
+                        @error('customerName') <span class="text-danger"> ادخل اسم عميل لانشاء الفاتورة </span>@enderror
                         @endif
                     </div>
 
@@ -126,6 +130,9 @@
                 <div class="flex justify-end mt-4">
                     <button class="btn bg-green-500 text-white" wire:click="addItem">أضف المنتج</button>
                 </div>
+                @error('items')
+                <p class="text-danger text-sm mt-2">اضف منتج لبدا الفاتورة</p>
+                @enderror
                 <div class="grid md:grid-cols-3 gap-3">
                     <!-- Search Product Section -->
                     <div>
@@ -189,15 +196,15 @@
 
                 <div>
                     <div class=" gap-3 mt-6">
+                        @if ($showRefundSection)
                         <div class="flex">
                             <input class="form-switch" type="checkbox" id="flexSwitchCheck" wire:click="toggleRefundSection">
                             <label class="ms-1.5" for="flexSwitchCheck"></label>
                         </div>
                         <label class="text-gray-800 text-sm font-medium">
-                            {{ !$showRefundSection ? 'اظخهر قسم المترجع' : 'اخفي قسم المرتجع' }}
+                            {{ !$showRefundSection ? 'اظهر قسم المترجع' : 'اخفي قسم المرتجع' }}
                         </label>
 
-                        @if ($showRefundSection)
                         <div class="relative max-w-l flex items-center gap-3 mb-6">
                             <input type="text" id="search-customer" class="form-input ps-11" placeholder="ابحث برقم الفاتورة"
                                 wire:model="invoice_search">
@@ -253,7 +260,7 @@
 
                                 <tr>
                                     <td class="px-4 py-2 font-bold" colspan="3">الإجمالي</td> <!-- Merge cells and bold text -->
-                                   
+
                                 </tr>
 
 
@@ -274,9 +281,10 @@
 
     <div class="lg:col-span-3 mt-5">
         <div class="flex justify-end gap-3">
-            <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none">
-                الغاء
-            </button>
+            <a href="{{ route('addInvoice') }}" type="button" class="inline-flex items-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none">
+                البدء في فاتورة جديدة
+            </a>
+            @if ($items)
             <button
                 style="cursor: pointer;"
                 wire:click="saveInvoice"
@@ -285,6 +293,9 @@
                 class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
                 طباعة وحفظ الفاتورة
             </button>
+            @else
+            <p class="text-gray-500 " style="font-size: 20px;">اضف عميل ومنتجات لحفظ الفاتورة</p>
+            @endif
             @if ($invoice)
             <a
                 href="{{ route('printer', $invoice->id) }}"

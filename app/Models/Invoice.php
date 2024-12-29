@@ -23,7 +23,7 @@ class Invoice extends Model
 
     public function refundsInitiated()
     {
-        return $this->hasMany(Refunded::class, 'current_invoice_id');
+        return $this->has(Refunded::class, 'current_invoice_id');
     }
 
 
