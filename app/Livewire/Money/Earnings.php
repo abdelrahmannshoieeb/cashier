@@ -17,7 +17,6 @@ class Earnings extends Component
     public function mount()
     {
         $this->updateTotals('day'); // Default to day filter
-        dd(now()->startOfWeek());
     }
     
     public function filterBy($filter)
