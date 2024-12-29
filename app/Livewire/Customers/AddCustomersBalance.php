@@ -12,8 +12,8 @@ class AddCustomersBalance extends Component
 
     public $type = 1;   
     public $amount;   
-    public $note;   
-    public $method;   
+    public $note = 'لا يوجد ملاحظات';   
+    public $method = 'cash';   
 
 
     public $customers;   
@@ -37,7 +37,7 @@ class AddCustomersBalance extends Component
     public function create()
     {
         $settings = settings::first();
-        $this->validate([
+        $validation = $this->validate([
             'amount' => 'required|numeric',
             'note' => 'string',
             'type' => 'required',
@@ -59,9 +59,10 @@ class AddCustomersBalance extends Component
                 $addToBalance->customer->save();
             }
 
+
             if($settings->adding_customers_fund_to_box ){
                 $settings->update([
-                    'box_value' => $settings->box_value - $this->amount,
+                    'box_value' => $settings->box_value + $this->amount,
                 ]);
             }
             session()->flash('addsuccess', 'تم إضافة المبلغ بنجاح');
@@ -81,7 +82,7 @@ class AddCustomersBalance extends Component
 
             if($settings->adding_customers_fund_to_box ){
                 $settings->update([
-                    'box_value' => $settings->box_value + $this->amount,
+                    'box_value' => $settings->box_value - $this->amount,
                 ]);
             }
             session()->flash('subtractmessage', 'تم اضافة المبلغ بنجاح');

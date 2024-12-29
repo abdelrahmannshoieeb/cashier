@@ -148,6 +148,13 @@
                     <td style="padding: 5px;" class="text-center">{{ $invoice->total }}</td>
                 </tr>
                 @endif
+                @if ($invoice->still > 0)
+                <tr>
+                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;"> المتبقي</td>
+                    <td style="padding: 5px;" class="text-center">{{ $invoice->still }}</td>
+                </tr>
+                    
+                @endif
                 @if($invoice->discount)
                 <tr>
                     <td colspan="2" style="font-weight: bold; text-align: left; padding: 5px;">الخصم</td>

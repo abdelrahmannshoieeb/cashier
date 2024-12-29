@@ -46,12 +46,12 @@
                             <h6 class="text-sm mb-2">خصم مبالغ الموردين من الصندوق</h6>
                             <div class="flex flex-col gap-2">
                                 <div class="form-check">
-                                    <input wire:model="subtract_Procurement_fund_from_box" value="1"
+                                    <input wire:model="subtract_Suppliers_fund_from_box" value="1"
                                         type="radio" class="form-radio text-primary" name="formRadio4" id="formRadio4_01" checked>
                                     <label class="ms-1.5" for="formRadio4_01">نعم</label>
                                 </div>
                                 <div class="form-check">
-                                    <input wire:model="subtract_Procurement_fund_from_box" value="0"
+                                    <input wire:model="subtract_Suppliers_fund_from_box" value="0"
                                         type="radio" class="form-radio text-primary" name="formRadio4" id="formRadio4_02">
                                     <label class="ms-1.5" for="formRadio4_02">لا</label>
                                 </div>

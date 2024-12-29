@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Invoice_item;
 use App\Models\Product;
+use App\Models\settings;
 use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -195,6 +196,14 @@ class InvoicController extends Controller
             $discount = $request->input('discount', 0); 
             return ($item['quantity'] * $item['calculated_price']) - $discount;
         });
+
+
+        $settings = settings::first();
+        if($settings->adding_sellers_fund_to_box ){
+            $settings->update([
+                'box_value' => $settings->box_value + $payedAmount,
+            ]);
+        }
         
         return response()->json([
             'success' => true,

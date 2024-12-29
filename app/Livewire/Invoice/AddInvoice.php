@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\Invoice_item;
 use App\Models\Product;
 use App\Models\Refunded;
+use App\Models\settings;
 use App\Models\Stock;
 use GuzzleHttp\Promise\Create;
 use Livewire\Component;
@@ -172,8 +173,7 @@ class AddInvoice extends Component
         // Update the $showButtons property based on customer balance
         if ($customer->balance < 0) {
             $this->showButtons = false;
-        }else
-        {
+        } else {
             $this->showButtons = true;
         }
     }
@@ -198,66 +198,70 @@ class AddInvoice extends Component
 
     public function saveInvoice()
     {
+        // Convert fields to proper types
         $this->total = is_numeric($this->total) ? (float) $this->total : 0.0;
         $this->payedAmount = is_numeric($this->payedAmount) ? (float) $this->payedAmount : 0.0;
         $this->discount = is_numeric($this->discount) ? (float) $this->discount : 0.0;
 
-
-        // dd([$this->items , $this->payMethod , $this->payedAmount , $this->notes , $this->discount , $this->status , $this->customerType , $this->customerName , $this->customer_id]);
         // Calculate total
         $this->total = collect($this->items)->sum(function ($item) {
             return ($item['quantity'] * $item['calculated_price']) - (float) $this->discount;
         });
 
+        // Validation
+        $this->validate([
+            'items' => 'required|array|min:1',
+        ]);
 
-        if ($this->customerType == false) {
+        if ($this->customerType === false) {
+            $this->customerType = 'unattached';
             $this->validate([
                 'customerName' => 'required', // Ensure customerName is required
             ]);
-            $this->customerType = 'unattached';
-        }else
-        {
-            $this->validate([
-                'customer_id' => 'required', // Ensure customer_id is required
-            ]);
-            $this->customerType = 'attached';
         }
 
-        // dd($this->customerType);
-
+       
         if ($this->customerType === 'attached') {
             $customer = Customer::find($this->selectedCustomerId);
-            $customer->balance = (float) $customer->balance
-                - (float) $this->total
-                + (float) $this->payedAmount
-                + (float) $this->discount;
-            $customer->save();
+            $remainingBalance = $customer->balance - $this->total + $this->payedAmount + $this->discount;
+
+            if ($customer->balance > $remainingBalance) {
+                $message = $remainingBalance > 0
+                    ? 'العميل ما زال له ' . $remainingBalance
+                    : 'العميل ما زال عليه ' . abs($remainingBalance);
+                session()->flash('balance', $message);
+
+                $customer->balance = $remainingBalance;
+                $customer->save();
+            }
         }
 
-        if ($this->customerType === 'attached' &&  $customer->balance > $customer->balance - $this->total + $this->payedAmount + $this->discount) {
-            session()->flash('balance', '   العميل ما زال عليه ' . $customer->balance - $this->total + $this->payedAmount + $this->discount);
-            $customer = Customer::find($this->selectedCustomerId);
-            $customer->balance = $customer->balance - $this->total + $this->payedAmount + $this->discount;
-            $customer->save();
-        }
-
-        if ($this->payedAmount < $this->total && $this->payedAmount != 1) {
+        // Set invoice status
+        if ($this->payedAmount < $this->total && $this->payedAmount != 0) {
             $this->status = 'partiallyPaid';
             $this->still = $this->total - $this->payedAmount;
         } elseif ($this->payedAmount == $this->total) {
             $this->status = 'paid';
-        } elseif ($this->payedAmount = 0) {
+        } elseif ($this->payedAmount == 0) {
             $this->status = 'unpaid';
             $this->still = $this->total;
         } else {
             return;
         }
 
+        // dd([
+        //     $this->total,
+        //     $this->payMethod,
+        //     $this->payedAmoun,
+        //     $this->notes,
+        //     $this->discount,
+        //     $this->status,
+        //     $this->customerType,
+        //     $this->customerName,
+        //     $this->selectedCustomerId,
+        //     $this->still
 
-
-        $this->validate([
-            'items' => 'required|array|min:1',
-        ]);
+        // ]);
         // Save Invoice
         $invoice = Invoice::create([
             'total' => $this->total,
@@ -267,16 +271,16 @@ class AddInvoice extends Component
             'discount' => $this->discount,
             'status' => $this->status,
             'customerType' => $this->customerType,
-            'customerName' => $this->customerName,
-            'customer_id' => $this->selectedCustomerId,
+            'customerName' => $this->customerType === 'unattached' ? $this->customerName : null,
+            'customer_id' => $this->customerType === 'attached' ? $this->selectedCustomerId : null,
             'still' => $this->still,
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         $this->invoice = $invoice;
 
+        // Save Invoice Items and Update Stock
         foreach ($this->items as $item) {
-            // Save Invoice Item
             Invoice_item::create([
                 'qty' => $item['quantity'],
                 'sellPrice' => $item['calculated_price'],
@@ -284,47 +288,52 @@ class AddInvoice extends Component
                 'invoice_id' => $invoice->id,
             ]);
 
-            $remainingQty = $item['quantity']; // The quantity to be subtracted
+            $remainingQty = $item['quantity'];
             $product = Product::find($item['id']);
 
             if ($product) {
                 if ($product->itemStock >= $remainingQty) {
                     $product->itemStock -= $remainingQty;
                     $product->save();
-                    $remainingQty = 0; // All quantity has been subtracted
+                    $remainingQty = 0;
                 } else {
-                    $remainingQty -= $product->itemStock; // Remaining quantity to subtract
-                    $product->itemStock = 0; // Deplete basic stock
+                    $remainingQty -= $product->itemStock;
+                    $product->itemStock = 0;
                     $product->save();
                 }
 
                 if ($remainingQty > 0) {
-                    $stocks = Stock::where('product_id', $item['id'])
-                        ->orderBy('type') // Order by type (1, 2, 3, 4)
-                        ->get();
+                    $stocks = Stock::where('product_id', $item['id'])->orderBy('type')->get();
 
                     foreach ($stocks as $stock) {
                         if ($stock->quantity >= $remainingQty) {
                             $stock->quantity -= $remainingQty;
                             $stock->save();
-                            $remainingQty = 0; // All quantity has been subtracted
-                            break; // Exit the loop
+                            $remainingQty = 0;
+                            break;
                         } else {
-                            $remainingQty -= $stock->quantity; // Subtract the available quantity
-                            $stock->quantity = 0; // Deplete this stock
+                            $remainingQty -= $stock->quantity;
+                            $stock->quantity = 0;
                             $stock->save();
                         }
                     }
                 }
             }
+
             if ($remainingQty > 0) {
                 throw new \Exception("Insufficient stock for product ID: {$item['id']}");
             }
         }
 
+        // Handle settings
+        $settings = settings::first();
+        if ($settings->adding_sellers_fund_to_box) {
+            $settings->update([
+                'box_value' => $settings->box_value + $this->payedAmount,
+            ]);
+        }
 
-
-        $this->reset(['items', 'payMethod', 'payedAmount', 'notes', 'discount', 'status', 'customer_id']);
+        // Reset fields
         $this->items = [
             [
                 'name' => '',
@@ -336,9 +345,11 @@ class AddInvoice extends Component
             ]
         ];
 
-        session()->flash('message', 'Invoice created successfully.');
         $this->showRefundSection = !$this->showRefundSection;
+        $this->reset(['items', 'payMethod', 'payedAmount', 'notes', 'discount', 'status', 'customer_id']);
+        session()->flash('message', 'Invoice created successfully.');
     }
+
 
     public function thesearch()
     {
@@ -439,9 +450,9 @@ class AddInvoice extends Component
             'refunded_invoice_id' => $invoiceRefunded->id,
             'type' => "refundAll",
         ]);
-        
+
         // dd($refunded);
-        
+
     }
     public function render()
     {
