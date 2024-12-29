@@ -13,7 +13,7 @@ class AddSupplierBalance extends Component
     public $type = 1;   
     public $amount;   
     public $note;   
-    public $method;   
+    public $method = 'cash';   
 
 
     public $suppliers;   
@@ -36,10 +36,10 @@ class AddSupplierBalance extends Component
 
     public function create()
     {
+        
         $settings = settings::first();
         $this->validate([
             'amount' => 'required|numeric',
-            'note' => 'string',
             'type' => 'required',
             'method' => 'required',
             'supplier_id' => 'required',

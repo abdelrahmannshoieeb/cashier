@@ -26,10 +26,16 @@
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">المبلغ</label>
                         <input wire:model="amount" type="text" id="simpleinput" class="form-input">
+                        @error($amount)
+                            <div class="text-danger " style="font-size: 16px;">يرجي ادخال المبلغ بالارقام</div>
+                        @enderror
                     </div>
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">لحساب</label>
                         <input wire:model="name" type="text" id="simpleinput" class="form-input">
+                        @error($name)
+                            <div class="text-danger " style="font-size: 16px;">يرجي ادخال سبب سحب المبلغ بالحروف</div>
+                        @enderror
                     </div>
 
                     <div>

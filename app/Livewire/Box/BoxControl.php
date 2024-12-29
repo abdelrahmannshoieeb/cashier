@@ -9,17 +9,19 @@ class BoxControl extends Component
 {
     public $settings;
 
-    public $adding_customers_fund_to_box ;
-    public $adding_sellers_fund_to_box;
-    public $subtract_Suppliers_fund_from_box;
-    public $subtract_Procurement_fund_from_box;
-    public $subtract_Expenses_from_box ;
+    public $adding_customers_fund_to_box = 0;
+    public $adding_sellers_fund_to_box = 0;
+    public $subtract_Suppliers_fund_from_box = 0;
+    public $subtract_Procurement_fund_from_box = 0;
+    public $subtract_Expenses_from_box = 0;
 
 
     public function mount()
     {
+
      $this->settings = settings::first();   
     
+
      $this->settings->update([
         'adding_customers_fund_to_box' => $this->settings->adding_customers_fund_to_box,
         'adding_sellers_fund_to_box' => $this->settings->adding_sellers_fund_to_box,
@@ -32,6 +34,13 @@ class BoxControl extends Component
 
     public function update()
     {
+          // Set default values if the fields are empty or not set
+    $this->adding_customers_fund_to_box = $this->settings->adding_customers_fund_to_box ?? $this->adding_customers_fund_to_box;
+    $this->adding_sellers_fund_to_box = $this->settings->adding_sellers_fund_to_box ?? $this->adding_sellers_fund_to_box;
+    $this->subtract_Suppliers_fund_from_box = $this->settings->subtract_Suppliers_fund_from_box ?? $this->subtract_Suppliers_fund_from_box;
+    $this->subtract_Procurement_fund_from_box = $this->settings->subtract_Procurement_fund_from_box ?? $this->subtract_Procurement_fund_from_box;
+    $this->subtract_Expenses_from_box = $this->settings->subtract_Expenses_from_box ?? $this->subtract_Expenses_from_box;
+
         $this->settings->update([
             'adding_customers_fund_to_box' => $this->adding_customers_fund_to_box,
             'adding_sellers_fund_to_box' => $this->adding_sellers_fund_to_box,

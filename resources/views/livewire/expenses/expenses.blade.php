@@ -133,7 +133,6 @@
 
                                 <td class="px-6 py-4 whitespace-nowrap text-end text-bold font-medium">
                                     <a class="text-danger hover:text-sky-700 mt-5 " href="#" style="font-size: larger; font-weight: bolder;" wire:click="delete({{$expense->id }})">مسح</a><br>
-                                    <a class="text-primary hover:text-sky-700" href="#" style="font-size: larger; font-weight: bolder" wire:click="delete({{$expense->id }})">تعديل</a>
                                 </td>
                             </tr>
                             @endforeach

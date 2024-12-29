@@ -80,7 +80,7 @@ class InvoicController extends Controller
             'customerName' => 'required_if:customerType,unattached|string',
             'selectedCustomerId' => 'required_if:customerType,attached|exists:customers,id',
             'notes' => 'nullable|string',
-            'user_id' => 'required|exists:users,id',
+           
         ]);
 
         // Handle validation errors
@@ -139,7 +139,7 @@ class InvoicController extends Controller
             'customerName' => $customerName,
             'customer_id' => $selectedCustomerId,
             'still' => $still,
-            'user_id' => $user_id
+            'user_id' => auth()->user()->id
         ]);
 
         foreach ($items as $item) {

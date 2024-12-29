@@ -12,7 +12,7 @@ class AddExpense extends Component
     public $type = 1;
     public $amount;
     public $name;
-    public $method;
+    public $method = 'cash';
 
     public function mount() {}
 
@@ -20,6 +20,10 @@ class AddExpense extends Component
     {
         $settings = settings::first();
         
+         $this->validate([
+        'amount' => 'required|numeric|min:1', // Validate that amount is required, numeric, and at least 1
+        'name' => 'required|string|max:255', // Ensure name is required, a string, and not longer than 255 characters
+    ]);
         if ($this->type == 1) {
             Expense::create([
                 'type' => 'add',

@@ -31,4 +31,9 @@ class Invoice extends Model
     {
         return $this->hasMany(Refunded::class, 'refunded_invoice_id');
     }
+
+    public function user ()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -43,22 +43,6 @@
                         </div>
 
                         <div>
-                            <h6 class="text-sm mb-2">خصم المشتريات من الصندوق</h6>
-                            <div class="flex flex-col gap-2">
-                                <div class="form-check">
-                                    <input wire:model="subtract_Suppliers_fund_from_box" value="1"
-                                        type="radio" class="form-radio text-primary" name="formRadio2" id="formRadio2_01" checked>
-                                    <label class="ms-1.5" for="formRadio2_01">نعم</label>
-                                </div>
-                                <div class="form-check">
-                                    <input wire:model="subtract_Suppliers_fund_from_box" value="0"
-                                        type="radio" class="form-radio text-primary" name="formRadio2" id="formRadio2_02">
-                                    <label class="ms-1.5" for="formRadio2_02">لا</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
                             <h6 class="text-sm mb-2">خصم مبالغ الموردين من الصندوق</h6>
                             <div class="flex flex-col gap-2">
                                 <div class="form-check">
@@ -148,17 +132,9 @@
                                 <br><span class="text-red-600">غير مفعل</span>
                                 @endif
                             </p>
+                          
                             <p class="text-gray-700 text-center dark:text-gray-400" style="font-size: 18px;">
-                                خصم مبالغ الموردين للصندوق
-                                @if ($settings->subtract_Procurement_fund_from_box == 1)
-                                <span class="text-green-600">مفعل</span>
-                                @else
-                                
-                                <br><span class="text-red-600">غير مفعل</span>
-                                @endif
-                            </p> 
-                            <p class="text-gray-700 text-center dark:text-gray-400" style="font-size: 18px;">
-                                خصم مبالغ المشتريات للصندوق :
+                                خصم مبالغ الموردين  من الصندوق :
                                 @if ($settings->subtract_Suppliers_fund_from_box == 1)
                                 <span class="text-green-600">مفعل</span>
                                 @else
@@ -166,7 +142,7 @@
                                 @endif
                             </p>
                             <p class="text-gray-700 text-center dark:text-gray-400" style="font-size: 18px;">
-                                خصم مبالغ المشتريات للصندوق :
+                                خصم مبالغ المصاريف من الصندوق :
                                 @if ($settings->subtract_Expenses_from_box == 1)
                                 <span class="text-green-600">مفعل</span>
                                 @else
