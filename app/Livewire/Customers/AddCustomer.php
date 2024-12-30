@@ -13,7 +13,7 @@ class AddCustomer extends Component
     public $phone1;
     public $phone2;
     public $pocket_number;
-    public $sell_price;
+    public $sell_price = 1;
     public $credit_limit;
     public $credit_limit_days;
 
@@ -22,7 +22,7 @@ class AddCustomer extends Component
 
     public function save()
     {
-     
+       
         $this->validate(
             [
                 'name' => 'required|unique:customers|string|max:255',
@@ -31,7 +31,6 @@ class AddCustomer extends Component
                 'phone1' => 'required|numeric',
                 'phone2' => 'nullable|numeric',
                 'pocket_number' => 'nullable|numeric',
-                'sell_price' => 'required|numeric',
                 'credit_limit' => 'nullable|numeric',
                 'credit_limit_days' => 'nullable|numeric',
                ],
@@ -44,11 +43,11 @@ class AddCustomer extends Component
                 'phone1.required' => 'رقم الهاتف مطلوب.',
                 'phone2.numeric' => 'رقم الهاتف يجب ان يتكون من 11 رقم.',
                 'pocket_number.numeric' => 'رقم الهاتف يجب ان يتكون من 11 رقم.',
-                'sell_price.numeric' => '  يجب أن يكون أرقام فقط.',
                 'credit_limit.numeric' => '  يجب أن يكون أرقام فقط.',
                 'credit_limit_days.numeric' => '  يجب أن يكون أرقام فقط.',
                 ]
             );
+           
         Customer::create([
             'name' => $this->name,
             'notes' => $this->notes,
@@ -62,7 +61,7 @@ class AddCustomer extends Component
             'balance' => 0 
         ]);
         
-        $this->reset('name', 'notes', 'addrees', 'phone1', 'phone2', 'pocket_number', 'sell_price', 'credit_limit', 'credit_limit_days');
+        $this->reset('name', 'notes', 'addrees', 'phone1', 'phone2', 'pocket_number', 'credit_limit', 'credit_limit_days');
         session()->flash('message', 'تم اضافة العميل بنجاح');
     }
 
