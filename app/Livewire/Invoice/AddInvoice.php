@@ -198,15 +198,21 @@ class AddInvoice extends Component
 
     public function saveInvoice()
     {
+
+
         // Convert fields to proper types
         $this->total = is_numeric($this->total) ? (float) $this->total : 0.0;
         $this->payedAmount = is_numeric($this->payedAmount) ? (float) $this->payedAmount : 0.0;
         $this->discount = is_numeric($this->discount) ? (float) $this->discount : 0.0;
 
+        
+       
+
         // Calculate total
         $this->total = collect($this->items)->sum(function ($item) {
             return ($item['quantity'] * $item['calculated_price']) - (float) $this->discount;
         });
+
 
         // Validation
         $this->validate([
@@ -219,6 +225,8 @@ class AddInvoice extends Component
                 'customerName' => 'required', // Ensure customerName is required
             ]);
         }
+
+      
 
        
         if ($this->customerType === 'attached') {
@@ -235,6 +243,9 @@ class AddInvoice extends Component
                 $customer->save();
             }
         }
+       
+         
+      
 
         // Set invoice status
         if ($this->payedAmount < $this->total && $this->payedAmount != 0) {
@@ -246,13 +257,13 @@ class AddInvoice extends Component
             $this->status = 'unpaid';
             $this->still = $this->total;
         } else {
-            return;
+            echo "as";
         }
 
         // dd([
         //     $this->total,
         //     $this->payMethod,
-        //     $this->payedAmoun,
+        //     $this->payedAmount,
         //     $this->notes,
         //     $this->discount,
         //     $this->status,
@@ -262,6 +273,7 @@ class AddInvoice extends Component
         //     $this->still
 
         // ]);
+       
         // Save Invoice
         $invoice = Invoice::create([
             'total' => $this->total,
@@ -276,6 +288,7 @@ class AddInvoice extends Component
             'still' => $this->still,
             'user_id' => auth()->user()->id,
         ]);
+        
 
         $this->invoice = $invoice;
 
