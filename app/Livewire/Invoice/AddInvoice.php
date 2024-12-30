@@ -253,26 +253,12 @@ class AddInvoice extends Component
             $this->still = $this->total - $this->payedAmount;
         } elseif ($this->payedAmount == $this->total) {
             $this->status = 'paid';
-        } elseif ($this->payedAmount == 0) {
+        } else {
             $this->status = 'unpaid';
             $this->still = $this->total;
-        } else {
-            echo "as";
         }
 
-        // dd([
-        //     $this->total,
-        //     $this->payMethod,
-        //     $this->payedAmount,
-        //     $this->notes,
-        //     $this->discount,
-        //     $this->status,
-        //     $this->customerType,
-        //     $this->customerName,
-        //     $this->selectedCustomerId,
-        //     $this->still
-
-        // ]);
+       
        
         // Save Invoice
         $invoice = Invoice::create([
@@ -333,9 +319,7 @@ class AddInvoice extends Component
                 }
             }
 
-            if ($remainingQty > 0) {
-                throw new \Exception("Insufficient stock for product ID: {$item['id']}");
-            }
+        
         }
 
         // Handle settings
@@ -346,21 +330,10 @@ class AddInvoice extends Component
             ]);
         }
 
-        // Reset fields
-        $this->items = [
-            [
-                'name' => '',
-                'quantity' => '',
-                'sell_price' => 1,
-                'calculated_price' => 0,
-                'id' => '',
-                'notes' => '',
-            ]
-        ];
-
-        $this->showRefundSection = !$this->showRefundSection;
-        $this->reset(['items', 'payMethod', 'payedAmount', 'notes', 'discount', 'status', 'customer_id']);
+       
         session()->flash('message', 'Invoice created successfully.');
+        $this->showRefundSection = !$this->showRefundSection;
+        $this->reset(['items', 'payMethod', 'payedAmount', 'notes', 'discount', 'status', 'customer_id']); 
     }
 
 
