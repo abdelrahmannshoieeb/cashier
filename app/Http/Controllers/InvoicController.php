@@ -18,32 +18,54 @@ class InvoicController extends Controller
         $products = Product::where('name', 'like', '%' . $request->search . '%')->with('stock')->get();
     
         $transformedProducts = $products->map(function ($product) {
-            // Filter stocks with quantity not equal to 1
-            $filteredStocks = $product->stock->filter(function ($stock) {
-                return $stock->quantity != 0;
-            });
+            $productData = $product->toArray(); // Get product data as an array
+            $itemStock = $product->itemStock;
     
-            // Create separate fields for each stock type if it exists
-            $stockData = [];
-            foreach ($filteredStocks as $stock) {
-                $stockData['stockType_' . $stock->type] = [
-                    'price' => $stock->price,
-                    'quantity' => $stock->quantity,
+            // If itemStock is not 0, return the product data without stock types
+            if ($itemStock > 0) {
+                unset($productData['stock']); // Remove the stock relation
+                return $productData;
+            }
+    
+            // ItemStock is 0, find the first stock type with quantity > 0
+            $stockTypes = ['1', '2', '3', '4']; // Define stock types in priority order
+            $stockTypeData = null; // Initialize as null
+    
+            foreach ($stockTypes as $type) {
+                $stock = $product->stock->where('type', $type)->first();
+                if ($stock && $stock->quantity > 0) {
+                    $stockTypeData = [
+                        'type' => $type,
+                        'price' => $stock->price,
+                        'quantity' => $stock->quantity,
+                    ];
+                    break;
+                }
+            }
+    
+            // If no valid stock type is found, mark as "Out of Stock" and limit details
+            if (!$stockTypeData) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'status' => 'Out of Stock'
                 ];
             }
     
-            // Exclude the 'stock' relation and return the transformed data
-            $productData = $product->toArray();
+            // Add the stockType data if found
             unset($productData['stock']); // Remove the stock relation
-    
-            return array_merge($productData, $stockData);
+            $productData['stockType'] = $stockTypeData;
+            return $productData;
         });
     
         return response()->json([
             'success' => true,
-            'data' => $transformedProducts
+            'data' => $transformedProducts,
         ], 200);
     }
+    
+    
+    
     
     
 
