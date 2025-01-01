@@ -10,14 +10,14 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            width: 80mm;
-            /* Restrict the width for 80mm thermal paper */
+            width: 65mm;
             margin: 0 auto;
         }
 
-        .margin0{
+        .margin0 {
             margin: 0;
         }
+
         .invoice-header,
         .invoice-footer {
             text-align: center;
@@ -78,100 +78,126 @@
 
     $user = \App\Models\User::find($invoice->user_id);
     @endphp
-    <h1 class="text-center">محلات ابو المجد</h1>
+    <h1 class="text-center" style=" font-weight: bolder">النسيم للاعلاف</h1>
 
-    <div class="invoice-header" style="text-align: right;">
-        <h1>فاتورة</h1>
-        <p>تاريخ الإنشاء: {{ $invoice->created_at }}</p>
+    <div class="invoice-header" style="text-align: right; font-weight: bold;">
+        <span>المسلسل: {{ $invoice->id }}</span>
+        <span style="float: left;">اسم العميل: {{ $invoice->customerName ?? $invoice->customer->name }}</span>
+
     </div>
-
+    <div class="invoice-header" style="text-align: right;">
+        <span>التاريخ : {{ $invoice->created_at->format('y-m-d') }}</span>
+        <span style="float: left;">
+            {{ $invoice->created_at->format('h:i') }} {{ $invoice->created_at->format('A') === 'AM' ? 'ص' : 'م' }}
+        </span>
+        
+    </div>
+    
+    <div class="invoice-header" style="text-align: right; font-weight: bold;">
+        <span>اسم الكاشير: الحاج مبروك</span>
+    </div>
     <div class="invoice-details" style="text-align: right;">
-        <p>اسم العميل: {{ $invoice->customerName ?? $invoice->customer->name }}</p>
-        <p>الحالة:
-            @if($invoice->status === 'paid')
-            مدفوعة
-            @elseif($invoice->status === 'unpaid')
-            غير مدفوعة
-            @elseif($invoice->status === 'partiallyPaid')
-            غير مدفوعة بالكامل - المبلغ المتبقي: {{ $invoice->total - $invoice->payedAmount }}
-            @endif
-        </p>
-        <p>المبلغ المدفوع: {{ $invoice->payedAmount }}</p>
-        @if($invoice->notes)
-        <p>ملاحظات: {{ $invoice->notes }}</p>
-        @endif
-        @if ($user->role === 'admin')
-        <p>  منفذ الفاتورة صاحب المحل</p>
-        @else
-        <p> :منفذ الفاتورة {{ $user->name }}</p>
-        @endif
+
     </div>
 
     <div class="invoice-items">
-        <table style="width: 100%; text-align: right; border-collapse: collapse; font-size: 14px;">
+        <table style="width: 100%; text-align: right; border-collapse: collapse; font-size: 16px; font-weight: bold; border: 2px solid black;">
             <thead>
                 <tr>
-                    <th style="border-bottom: 1px solid #ddd; padding: 5px;" class="text-center">الاسم</th>
-                    <th style="border-bottom: 1px solid #ddd; padding: 5px;" class="text-center">الكمية</th>
-                    <th style="border-bottom: 1px solid #ddd; padding: 5px;" class="text-center">سعر البيع</th>
+                    <th style="border: 2px solid black; padding: 5px;" class="text-center">إجمالي السعر</th>
+                    <th style="border: 2px solid black; padding: 5px;" class="text-center">سعر الصنف</th>
+                    <th style="border: 2px solid black; padding: 5px;" class="text-center">الكمية</th>
+                    <th style="border: 2px solid black; padding: 5px;" class="text-right">الصنف</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($invoice->items as $item)
                 <tr>
-                    <td style="padding: 5px;" class="text-center">{{ $item->product->name }}</td>
-                    <td style="padding: 5px;" class="text-center">{{ $item->qty }}</td>
-                    <td style="padding: 5px;" class="text-center">{{ $item->sellPrice }}</td>
+                    <td style="border: 2px solid black; padding: 5px;" class="text-center">{{ $item->qty * $item->sellPrice }}</td>
+                    <td style="border: 2px solid black; padding: 5px;" class="text-center">{{ $item->sellPrice }}</td>
+                    <td style="border: 2px solid black; padding: 5px;" class="text-center">{{ $item->qty }}</td>
+                    <td style="border: 2px solid black; padding: 5px; font_size:12px;" class="text-right">{{ $item->product->name }}</td>
                 </tr>
                 @endforeach
             </tbody>
             <tfoot>
-                @if ($refunded)
                 <tr>
-                    @php
-                    $refundedMoney = \App\Models\Invoice::find($refunded->refunded_invoice_id)->total; ;
-                    @endphp
-                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;">المرتجع</td>
-                    <td style="padding: 5px;" class="text-center">{{ $refundedMoney }}</td>
+                    <td style="border: 2px solid black; padding: 5px;" class="text-center">{{ $invoice->total }}</td>
+                    <td style="border: 2px solid black; padding: 5px;" class="text-center"></td>
+                    <td style="border: 2px solid black; padding: 5px;" class="text-center">{{$invoice->items->sum('qty') }}</td>
+                    <td colspan="2" style="font-weight: bold; text-align: right; border: 2px solid black; padding: 5px;">الإجمالي</td>
                 </tr>
-                <tr>
-                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;"> الاجمالي قبل المرتجع</td>
-                    <td style="padding: 5px;" class="text-center">{{ $invoice->total + $refundedMoney }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;"> الاجمالي بعد المرتجع</td>
-                    <td style="padding: 5px;" class="text-center">{{ $invoice->total }}</td>
-                </tr>
-                @else
-                <tr>
-                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;"> الإجمالي</td>
-                    <td style="padding: 5px;" class="text-center">{{ $invoice->total }}</td>
-                </tr>
-                @endif
-                @if ($invoice->still > 0)
-                <tr>
-                    <td colspan="2"  style="font-weight: bold; text-align: left; padding: 5px;"> المتبقي</td>
-                    <td style="padding: 5px;" class="text-center">{{ $invoice->still }}</td>
-                </tr>
-                    
-                @endif
-                @if($invoice->discount)
-                <tr>
-                    <td colspan="2" style="font-weight: bold; text-align: left; padding: 5px;">الخصم</td>
-                    <td style="padding: 5px;">{{ $invoice->discount }}</td>
-                </tr>
-                @endif
+
             </tfoot>
         </table>
     </div>
 
-    <div class="invoice-footer text-center margin0">
-        <p class="margin0">شكرًا لتعاملكم معنا!</p>
+    @if ($refunded)
+    @php
+    $refundedMoney = \App\Models\Invoice::find($refunded->refunded_invoice_id)->total;
+    @endphp
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
+            <span style="text-align: right; flex: 1;">المرتجع:</span>
+            <span style="margin: 0 20px; flex: 1;"></span>
+            <span style="text-align: left; flex: 1;">{{ $refundedMoney }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
+            <span style="text-align: right; flex: 1;">الإجمالي قبل المرتجع:</span>
+            <span style="margin: 0 20px; flex: 1;"></span>
+            <span style="text-align: left; flex: 1;">{{ $invoice->total + $refundedMoney }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
+            <span style="text-align: right; flex: 1;">الإجمالي بعد المرتجع:</span>
+            <span style="margin: 0 20px; flex: 1;"></span>
+            <span style="text-align: left; flex: 1;">{{ $invoice->total }}</span>
+        </div>
     </div>
+    @endif
+
+    @if ($invoice->discount)
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
+            <span style="text-align: left; flex: 1;">{{ $invoice->discount }}</span>
+            <span style="margin: 0 20px; flex: 1;"></span>
+            <span style="text-align: right; flex: 1;">الخصم</span>
+        </div>
+    </div>
+    @endif
+
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
+            <span style="text-align: left; flex: 1;">{{ $invoice->total }}</span>
+            <span style="margin: 0 20px; flex: 1;"></span>
+            <span style="text-align: right; flex: 1;">الاجمالي</span>
+        </div>
+    </div>
+
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
+            <span style="text-align: left; flex: 1;">{{ $invoice->payedAmount }}</span>
+            <span style="margin: 0 20px; flex: 1;"></span>
+            <span style="text-align: right; flex: 1;">المدفوع</span>
+        </div>
+    </div>
+
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
+            <span style="text-align: left; flex: 1;">{{ $invoice->still }}</span>
+            <span style="margin: 0 20px; flex: 1;"></span>
+            <span style="text-align: right; flex: 1;">المتبقي</span>
+        </div>
+    </div>
+
+
+
+
+
+
     <hr class="margin0">
     <p class="text-center margin0">السعر شامل الضريبة</p>
-    <p class="text-center font-bold margin0">العنوان : مسطرد محلات ابو المجد</p>
-    <p class="text-center font-bold margin0">رقم الجوال : 01102102007</p>
+    <p class="text-center font-bold margin0">العنوان : هلية -ببا -بني سويف </p>
+    <p class="text-center font-bold margin0">رقم الهاتف : 01115179392</p>
     <p class="text-center">تم التطوير بواسطة <strong>Nexoria للبرمجيات</strong></p>
 
 

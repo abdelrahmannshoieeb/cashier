@@ -19,10 +19,10 @@ class Expenses extends Component
     }
     public function delete($id)
     {
-        $user = expenses::find($id);
+        $exepense = Expense::find($id);
         
-        if ($user) {
-            $user->delete();  // Delete the category
+        if ($exepense) {
+            $exepense->delete();  // Delete the category
         }
     
         $this->expenses = Expense::all();
@@ -65,6 +65,8 @@ class Expenses extends Component
     public function userFilter($userId) {
         $this->expenses = Expense::where('user_id', $userId)->get();
     }
+
+   
 
     public function render()
     {

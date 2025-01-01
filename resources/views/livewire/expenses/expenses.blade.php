@@ -10,7 +10,7 @@
                             name="table-with-pagination-search"
                             id="table-with-pagination-search"
                             class="form-input ps-11 font-bold w-full"
-                            placeholder="ابحث باسم المورد"
+                            placeholder="ابحث باسم المنفذ"
                             wire:model="search">
                         <button type="button" wire:click="thesearch" class="btn bg-info text-white mx-2">ابحث</button>
                         <button type="button" wire:click="viewAll" class="btn bg-dark text-white mx-2"> الكل</button>
@@ -82,6 +82,7 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-left" style="font-size: larger; font-weight: bolder">نوع السند </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">ملاحظات </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">طريقة الدفع </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">التاريخ </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">العمليات</th>
 
                             </tr>
@@ -129,7 +130,10 @@
 
 
 
-
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder">
+                                    <li> <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">{{$expense->created_at->format('y-m-d')}}يوم</span> </li>
+                                    <li> <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">{{$expense->created_at->format('h')}}الساعة</span> </li>
+                                </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap text-end text-bold font-medium">
                                     <a class="text-danger hover:text-sky-700 mt-5 " href="#" style="font-size: larger; font-weight: bolder;" wire:click="delete({{$expense->id }})">مسح</a><br>
