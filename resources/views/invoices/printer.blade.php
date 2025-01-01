@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            width: 50mm;
+            width: 65mm;
             margin: 0 auto;
         }
 
