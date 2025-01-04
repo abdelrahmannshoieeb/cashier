@@ -26,7 +26,6 @@ class Products extends Component
     }
     public function delete($id)
     {
-        dd($id);
         $product = Product::find($id);
 
         if ($product) {

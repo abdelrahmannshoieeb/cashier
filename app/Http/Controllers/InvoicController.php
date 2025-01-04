@@ -93,7 +93,7 @@ class InvoicController extends Controller
         // Validation rules
         $validator = Validator::make($request->all(), [
             'items' => 'required|array|min:1',
-            'product_id.*.id' => 'required|exists:products,id',
+            'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.calculated_price' => 'required',
             'payMethod' => 'required|string',
@@ -103,9 +103,8 @@ class InvoicController extends Controller
             'customerName' => 'required_if:customerType,unattached|string',
             'selectedCustomerId' => 'required_if:customerType,attached|exists:customers,id',
             'notes' => 'nullable|string',
-           
         ]);
-
+    
         // Handle validation errors
         if ($validator->fails()) {
             return response()->json([
@@ -113,43 +112,41 @@ class InvoicController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-
+    
         // Extract data from the request
         $items = $request->input('items');
         $payMethod = $request->input('payMethod');
         $payedAmount = $request->input('payedAmount');
         $discount = $request->input('discount', 0);
         $customerType = $request->input('customerType');
-        $customerName = $request->input('customerName');
-        $selectedCustomerId = $request->input('selectedCustomerId');
+        $customerName = $customerType === 'unattached' ? $request->input('customerName') : null;
+        $selectedCustomerId = $customerType === 'attached' ? $request->input('selectedCustomerId') : null;
         $notes = $request->input('notes');
         $user_id = $request->input('user_id');
-
+    
         // Calculate total
         $total = collect($items)->sum(function ($item) use ($discount) {
             return $item['quantity'] * $item['calculated_price'] - $discount;
         });
-
+    
         // Handle customer balance for attached customers
         if ($customerType === 'attached') {
             $customer = Customer::find($selectedCustomerId);
-
             $customer->balance = $customer->balance - $total + $payedAmount + $discount;
             $customer->save();
-
         }
-
+    
         // Determine status
         $status = 'unpaid';
         $still = $total;
-
+    
         if ($payedAmount < $total) {
             $status = 'partiallyPaid';
             $still = $total - $payedAmount;
         } elseif ($payedAmount == $total) {
             $status = 'paid';
         }
-
+    
         // Create the invoice
         $invoice = Invoice::create([
             'total' => $total,
@@ -159,24 +156,24 @@ class InvoicController extends Controller
             'discount' => $discount,
             'status' => $status,
             'customerType' => $customerType,
-            'customerName' => $customerName,
-            'customer_id' => $selectedCustomerId,
+            'customerName' => $customerType === 'unattached' ? $customerName : null, // Save only for unattached
+            'customer_id' => $customerType === 'attached' ? $selectedCustomerId : null, // Save only for attached
             'still' => $still,
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
-
+    
+        // Save items logic remains unchanged
         foreach ($items as $item) {
-            // Save Invoice Item
             Invoice_item::create([
                 'qty' => $item['quantity'],
                 'sellPrice' => $item['calculated_price'],
                 'product_id' => $item['product_id'],
                 'invoice_id' => $invoice->id,
             ]);
-
-            $remainingQty = $item['quantity']; // The quantity to be subtracted
+    
+            $remainingQty = $item['quantity'];
             $product = Product::find($item['product_id']);
-
+    
             if ($product) {
                 if ($product->itemStock >= $remainingQty) {
                     $product->itemStock -= $remainingQty;
@@ -187,10 +184,9 @@ class InvoicController extends Controller
                     $product->itemStock = 0;
                     $product->save();
                 }
-
+    
                 if ($remainingQty > 0) {
-                    $stocks = Stock::where('product_id', $item['id'])->orderBy('type')->get();
-
+                    $stocks = Stock::where('product_id', $item['product_id'])->orderBy('type')->get();
                     foreach ($stocks as $stock) {
                         if ($stock->quantity >= $remainingQty) {
                             $stock->quantity -= $remainingQty;
@@ -204,37 +200,34 @@ class InvoicController extends Controller
                         }
                     }
                 }
-
+    
                 if ($remainingQty > 0) {
                     return response()->json([
                         'success' => false,
-                        'message' => "Insufficient stock for product ID: {$item['id']}",
+                        'message' => "Insufficient stock for product ID: {$item['product_id']}",
                     ], 400);
                 }
             }
         }
-
-        $total = collect($items)->sum(function ($item) use ($request) {
-            $discount = $request->input('discount', 0); 
-            return ($item['quantity'] * $item['calculated_price']) - $discount;
-        });
-
-
+    
+        // Add seller's funds to box if enabled
         $settings = settings::first();
-        if($settings->adding_sellers_fund_to_box ){
+        if ($settings->adding_sellers_fund_to_box) {
             $settings->update([
                 'box_value' => $settings->box_value + $payedAmount,
             ]);
         }
-        
+    
         return response()->json([
             'success' => true,
             'message' => 'Invoice created successfully.',
             'invoice' => $invoice,
             'items' => $items,
-            'total' => $total
+            'total' => $total,
         ]);
     }
+    
+    
 
 
 

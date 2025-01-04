@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            width: 65mm;
+            width: 75mm;
             margin: 0 auto;
         }
 
@@ -36,7 +36,7 @@
 
         .invoice-details,
         .invoice-items {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .invoice-details p,
@@ -68,40 +68,50 @@
     </style>
 </head>
 
+
+@php
+$id = request()->segment(2);
+$invoice = \App\Models\Invoice::find($id);
+
+$refunded = \App\Models\Refunded::where('current_invoice_id', $id)->first();
+
+$user = \App\Models\User::find($invoice->user_id);
+@endphp
+@php
+// Helper functions for Arabic numeral conversion
+if (!function_exists('convertToArabicDigits')) {
+function convertToArabicDigits($number)
+{
+$arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+return str_replace(range(0, 9), $arabicDigits, $number);
+}
+}
+
+\Carbon\Carbon::setLocale('ar'); // Set locale for Carbon
+@endphp
+
 <body>
-
-    @php
-    $id = request()->segment(2);
-    $invoice = \App\Models\Invoice::find($id);
-
-    $refunded = \App\Models\Refunded::where('current_invoice_id', $id)->first();
-
-    $user = \App\Models\User::find($invoice->user_id);
-    @endphp
-    <h1 class="text-center" style=" font-weight: bolder">النسيم للاعلاف</h1>
+    <h1 class="text-center" style="font-weight: bolder;">النسيم للاعلاف</h1>
 
     <div class="invoice-header" style="text-align: right; font-weight: bold;">
-        <span>المسلسل: {{ $invoice->id }}</span>
+        <span>المسلسل: {{ convertToArabicDigits($invoice->id) }}</span>
         <span style="float: left;">اسم العميل: {{ $invoice->customerName ?? $invoice->customer->name }}</span>
+    </div>
 
-    </div>
     <div class="invoice-header" style="text-align: right;">
-        <span>التاريخ : {{ $invoice->created_at->format('y-m-d') }}</span>
+        <span>التاريخ: {{ convertToArabicDigits($invoice->created_at->format('y-m-d')) }}</span>
         <span style="float: left;">
-            {{ $invoice->created_at->format('h:i') }} {{ $invoice->created_at->format('A') === 'AM' ? 'ص' : 'م' }}
+            {{ convertToArabicDigits($invoice->created_at->addHours(2)->format('h:i')) }}
+            {{ $invoice->created_at->format('A') === 'AM' ? 'صباحا' : 'مساء' }}
         </span>
-        
     </div>
-    
+
     <div class="invoice-header" style="text-align: right; font-weight: bold;">
         <span>اسم الكاشير: الحاج مبروك</span>
     </div>
-    <div class="invoice-details" style="text-align: right;">
-
-    </div>
 
     <div class="invoice-items">
-        <table style="width: 100%; text-align: right; border-collapse: collapse; font-size: 16px; font-weight: bold; border: 2px solid black;">
+        <table style="width: 100%; text-align: right; border-collapse: collapse; font-size: 14px; font-weight: bold; border: 2px solid black;">
             <thead>
                 <tr>
                     <th style="border: 2px solid black; padding: 5px;" class="text-center">إجمالي السعر</th>
@@ -113,21 +123,40 @@
             <tbody>
                 @foreach ($invoice->items as $item)
                 <tr>
-                    <td style="border: 2px solid black; padding: 5px;" class="text-center">{{ $item->qty * $item->sellPrice }}</td>
-                    <td style="border: 2px solid black; padding: 5px;" class="text-center">{{ $item->sellPrice }}</td>
-                    <td style="border: 2px solid black; padding: 5px;" class="text-center">{{ $item->qty }}</td>
-                    <td style="border: 2px solid black; padding: 5px; font_size:12px;" class="text-right">{{ $item->product->name }}</td>
+                    <td style="border: 2px solid black; padding: 5px;" class="text-center ">
+                        <strong>
+
+                            {{ convertToArabicDigits($item->qty * $item->sellPrice) }}
+                        </strong>
+                    </td>
+                    <td style="border: 2px solid black; padding: 5px;" class="text-center">
+                        <strong>
+
+                            {{ convertToArabicDigits($item->sellPrice) }}
+                        </strong>
+                    </td>
+                    <td style="border: 2px solid black; padding: 5px; font_size:14px;" class="text-center">
+                        <strong>
+                            {{ convertToArabicDigits($item->qty) }}
+                        </strong>
+                    </td>
+                    <td style="border: 2px solid black; padding: 5px; font_size:12px;" class="text-right">
+                        {{ $item->product->name }}
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
-                    <td style="border: 2px solid black; padding: 5px;" class="text-center">{{ $invoice->total }}</td>
-                    <td style="border: 2px solid black; padding: 5px;" class="text-center"></td>
-                    <td style="border: 2px solid black; padding: 5px;" class="text-center">{{$invoice->items->sum('qty') }}</td>
-                    <td colspan="2" style="font-weight: bold; text-align: right; border: 2px solid black; padding: 5px;">الإجمالي</td>
+                    <td style="border: 2px dashed black; padding: 5px;" class="text-center">
+                        {{ convertToArabicDigits($invoice->total) }}
+                    </td>
+                    <td style="border: 2px dashed black; padding: 5px;" class="text-center"></td>
+                    <td style="border: 2px dashed black; padding: 5px;" class="text-center">
+                        {{ convertToArabicDigits($invoice->items->sum('qty')) }}
+                    </td>
+                    <td colspan="2" style="font-weight: bold; text-align: right; border: 2px dashed black; padding: 5px;">الإجمالي</td>
                 </tr>
-
             </tfoot>
         </table>
     </div>
@@ -140,17 +169,19 @@
         <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
             <span style="text-align: right; flex: 1;">المرتجع:</span>
             <span style="margin: 0 20px; flex: 1;"></span>
-            <span style="text-align: left; flex: 1;">{{ $refundedMoney }}</span>
+            <span style="text-align: left; flex: 1;">{{ convertToArabicDigits($refundedMoney) }}</span>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
             <span style="text-align: right; flex: 1;">الإجمالي قبل المرتجع:</span>
             <span style="margin: 0 20px; flex: 1;"></span>
-            <span style="text-align: left; flex: 1;">{{ $invoice->total + $refundedMoney }}</span>
+            <span style="text-align: left; flex: 1;">
+                {{ convertToArabicDigits($invoice->total + $refundedMoney) }}
+            </span>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
             <span style="text-align: right; flex: 1;">الإجمالي بعد المرتجع:</span>
             <span style="margin: 0 20px; flex: 1;"></span>
-            <span style="text-align: left; flex: 1;">{{ $invoice->total }}</span>
+            <span style="text-align: left; flex: 1;">{{ convertToArabicDigits($invoice->total) }}</span>
         </div>
     </div>
     @endif
@@ -158,7 +189,7 @@
     @if ($invoice->discount)
     <div>
         <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
-            <span style="text-align: left; flex: 1;">{{ $invoice->discount }}</span>
+            <span style="text-align: left; flex: 1;">{{ convertToArabicDigits($invoice->discount) }}</span>
             <span style="margin: 0 20px; flex: 1;"></span>
             <span style="text-align: right; flex: 1;">الخصم</span>
         </div>
@@ -167,7 +198,7 @@
 
     <div>
         <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
-            <span style="text-align: left; flex: 1;">{{ $invoice->total }}</span>
+            <span style="text-align: left; flex: 1;">{{ convertToArabicDigits($invoice->total) }}</span>
             <span style="margin: 0 20px; flex: 1;"></span>
             <span style="text-align: right; flex: 1;">الاجمالي</span>
         </div>
@@ -175,7 +206,7 @@
 
     <div>
         <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
-            <span style="text-align: left; flex: 1;">{{ $invoice->payedAmount }}</span>
+            <span style="text-align: left; flex: 1;">{{ convertToArabicDigits($invoice->payedAmount) }}</span>
             <span style="margin: 0 20px; flex: 1;"></span>
             <span style="text-align: right; flex: 1;">المدفوع</span>
         </div>
@@ -183,38 +214,29 @@
 
     <div>
         <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
-            <span style="text-align: left; flex: 1;">{{ $invoice->still }}</span>
+            <span style="text-align: left; flex: 1;">{{ convertToArabicDigits($invoice->still) }}</span>
             <span style="margin: 0 20px; flex: 1;"></span>
             <span style="text-align: right; flex: 1;">المتبقي</span>
         </div>
     </div>
 
-
-
-
-
-
     <hr class="margin0">
     <p class="text-center margin0">السعر شامل الضريبة</p>
-    <p class="text-center font-bold margin0">العنوان : هلية -ببا -بني سويف </p>
-    <p class="text-center font-bold margin0">رقم الهاتف : 01115179392</p>
-    <p class="text-center">تم التطوير بواسطة <strong>Nexoria للبرمجيات</strong></p>
-
+    <p class="text-center font-bold margin0">العنوان: هلية - ببا - بني سويف</p>
+    <p class="text-center font-bold margin0">رقم الهاتف: 01115179392</p>
+    <p class="text-center" style="font-size: 14px;">
+        01012620529 للبرمجيات Nexoria <strong>تم التطوير بواسطة</strong>
+    </p>
 
     <script>
-        // Function to trigger printing
         function printInvoice() {
-            window.print(); // Trigger the print dialog
+            window.print();
         }
-
-        // Wait until the page content is fully loaded, then trigger the print dialog
         window.onload = function() {
-            setTimeout(function() {
-                printInvoice();
-            }, 500); // Delay of 500 milliseconds to ensure content has loaded
+            setTimeout(printInvoice, 500);
         };
     </script>
-
 </body>
+
 
 </html>
