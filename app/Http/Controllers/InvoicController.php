@@ -163,18 +163,15 @@ class InvoicController extends Controller
         ]);
     
         // Save items logic remains unchanged
+        $itemDetails = []; // Array to store detailed item info
+
         foreach ($items as $item) {
-            Invoice_item::create([
-                'qty' => $item['quantity'],
-                'sellPrice' => $item['calculated_price'],
-                'product_id' => $item['product_id'],
-                'invoice_id' => $invoice->id,
-            ]);
-    
-            $remainingQty = $item['quantity'];
-            $product = Product::find($item['product_id']);
-    
+            $product = Product::find($item['product_id']); // Retrieve product details
+        
             if ($product) {
+                // Update stock logic remains unchanged
+                $remainingQty = $item['quantity'];
+        
                 if ($product->itemStock >= $remainingQty) {
                     $product->itemStock -= $remainingQty;
                     $product->save();
@@ -184,7 +181,7 @@ class InvoicController extends Controller
                     $product->itemStock = 0;
                     $product->save();
                 }
-    
+        
                 if ($remainingQty > 0) {
                     $stocks = Stock::where('product_id', $item['product_id'])->orderBy('type')->get();
                     foreach ($stocks as $stock) {
@@ -200,16 +197,32 @@ class InvoicController extends Controller
                         }
                     }
                 }
-    
+        
                 if ($remainingQty > 0) {
                     return response()->json([
                         'success' => false,
                         'message' => "Insufficient stock for product ID: {$item['product_id']}",
                     ], 400);
                 }
+        
+                // Save item details for the response
+                $itemDetails[] = [
+                    'product_id' => $item['product_id'],
+                    'product_name' => $product->name,
+                    'quantity' => $item['quantity'],
+                    'calculated_price' => $item['calculated_price'],
+                ];
+        
+                // Save the invoice item
+                Invoice_item::create([
+                    'qty' => $item['quantity'],
+                    'sellPrice' => $item['calculated_price'],
+                    'product_id' => $item['product_id'],
+                    'invoice_id' => $invoice->id,
+                ]);
             }
         }
-    
+        
         // Add seller's funds to box if enabled
         $settings = settings::first();
         if ($settings->adding_sellers_fund_to_box) {
@@ -217,17 +230,16 @@ class InvoicController extends Controller
                 'box_value' => $settings->box_value + $payedAmount,
             ]);
         }
-    
+        
+        // Response with item details and product names
         return response()->json([
             'success' => true,
             'message' => 'Invoice created successfully.',
             'invoice' => $invoice,
-            'items' => $items,
+            'items' => $itemDetails, // Include detailed items with product names
             'total' => $total,
         ]);
     }
-    
-    
 
 
 

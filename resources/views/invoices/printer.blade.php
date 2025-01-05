@@ -216,9 +216,19 @@ return str_replace(range(0, 9), $arabicDigits, $number);
         <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
             <span style="text-align: left; flex: 1;">{{ convertToArabicDigits($invoice->still) }}</span>
             <span style="margin: 0 20px; flex: 1;"></span>
-            <span style="text-align: right; flex: 1;">المتبقي</span>
+            <span style="text-align: right; flex: 1;"> المتبقي من الفاتورة</span>
         </div>
     </div>
+    @if ($invoice->customer->balance < 0)
+        
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
+            <span style="text-align: left; flex: 1;">{{ convertToArabicDigits(abs($invoice->customer->balance)) }}</span>
+            <span style="margin: 0 20px; flex: 1;"></span>
+            <span style="text-align: right; flex: 1; width: 100%;" > ما زال متبقي عليه</span>
+        </div>
+    </div>
+    @endif
 
     <hr class="margin0">
     <p class="text-center margin0">السعر شامل الضريبة</p>
@@ -228,14 +238,14 @@ return str_replace(range(0, 9), $arabicDigits, $number);
         01012620529 للبرمجيات Nexoria <strong>تم التطوير بواسطة</strong>
     </p>
 
-    <script>
+    <!-- <script>
         function printInvoice() {
             window.print();
         }
         window.onload = function() {
             setTimeout(printInvoice, 500);
         };
-    </script>
+    </script> -->
 </body>
 
 
