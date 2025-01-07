@@ -100,7 +100,7 @@ class InvoicController extends Controller
             'payedAmount' => 'required|numeric|min:0',
             'discount' => 'nullable|numeric|min:0',
             'customerType' => 'required|string|in:attached,unattached',
-            'customerName' => 'required_if:customerType,unattached|string',
+            'customerName' => 'required_if:customerType,unattached',
             'selectedCustomerId' => 'required_if:customerType,attached|exists:customers,id',
             'notes' => 'nullable|string',
         ]);
