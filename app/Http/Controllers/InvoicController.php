@@ -201,7 +201,7 @@ class InvoicController extends Controller
                 if ($remainingQty > 0) {
                     return response()->json([
                         'success' => false,
-                        'message' => "Insufficient stock for product ID: {$item['product_id']}",
+                        'message' => "product out of all stocks: {$item['product_id']}",
                     ], 400);
                 }
         
