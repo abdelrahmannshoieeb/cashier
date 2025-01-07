@@ -252,18 +252,20 @@ class InvoicController extends Controller
     
         $data = $invoices->map(function ($invoice) {
             return [
-                'id' => $invoice->id,
-                'total' => $invoice->total,
-                'payedAmount' => $invoice->payedAmount,
-                'discount' => $invoice->discount,
-                'status' => $invoice->status,
-                'customer_name' => $invoice->customerType === 'unattached' 
-                    ? $invoice->customerName 
-                    : $invoice->customer->name,
-                'employee_name' => auth()->user()->name,
-                'employee_shop' => auth()->user()->shop->name,
-                'day' => $invoice->created_at->format('Y-m-d'),
-                'time' => $invoice->created_at->addHours(2)->format('H:i'),
+                'invoice' => [
+                    'id' => $invoice->id,
+                    'total' => $invoice->total,
+                    'payedAmount' => $invoice->payedAmount,
+                    'discount' => $invoice->discount,
+                    'status' => $invoice->status,
+                    'customer_name' => $invoice->customerType === 'unattached' 
+                        ? $invoice->customerName 
+                        : $invoice->customer->name,
+                    'employee_name' => auth()->user()->name,
+                    'employee_shop' => auth()->user()->shop->name,
+                    'day' => $invoice->created_at->format('Y-m-d'),
+                    'time' => $invoice->created_at->addHours(2)->format('H:i'),
+                ],
                 'items' => $invoice->items->map(function ($item) {
                     return [
                         'qty' => $item->qty,
