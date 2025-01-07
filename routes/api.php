@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('searchProduct', [InvoicController::class, 'searchProduct']);
     Route::get('searchCustomer', [InvoicController::class, 'searchCustomer']);
     Route::post('/save-invoice', [InvoicController::class, 'saveInvoice']);
+    Route::get('/getInvoices', [InvoicController::class, 'getInvoices']);
 
 });
 

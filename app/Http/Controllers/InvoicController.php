@@ -231,6 +231,7 @@ class InvoicController extends Controller
             ]);
         }
         
+
         // Response with item details and product names
         return response()->json([
             'success' => true,
@@ -238,9 +239,49 @@ class InvoicController extends Controller
             'invoice' => $invoice,
             'items' => $itemDetails, // Include detailed items with product names
             'total' => $total,
+            'employee_name' => auth()->user()->name,
+            'employee_shop' => auth()->user()->shop->name,
+            'customer_name' => $customerType === 'unattached' ? $customerName : $customer->name,
         ]);
     }
 
+
+    public function getInvoices()
+    {
+        $invoices = Invoice::where('user_id', auth()->user()->id)->get();
+    
+        $data = $invoices->map(function ($invoice) {
+            return [
+                'id' => $invoice->id,
+                'total' => $invoice->total,
+                'payedAmount' => $invoice->payedAmount,
+                'discount' => $invoice->discount,
+                'status' => $invoice->status,
+                'customer_name' => $invoice->customerType === 'unattached' 
+                    ? $invoice->customerName 
+                    : $invoice->customer->name,
+                'employee_name' => auth()->user()->name,
+                'employee_shop' => auth()->user()->shop->name,
+                'day' => $invoice->created_at->format('Y-m-d'),
+                'time' => $invoice->created_at->addHours(2)->format('H:i'),
+                'items' => $invoice->items->map(function ($item) {
+                    return [
+                        'qty' => $item->qty,
+                        'sellPrice*qty' => $item->qty * $item->sellPrice,
+                        'sellPrice' => $item->sellPrice,
+                        'product_name' => $item->product->name,
+                    ];
+                }),
+            ];
+        });
+    
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ], 200);
+    }
+    
+    
 
 
 }
