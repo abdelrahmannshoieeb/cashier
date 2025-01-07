@@ -268,8 +268,9 @@ class InvoicController extends Controller
                 ],
                 'items' => $invoice->items->map(function ($item) {
                     return [
-                        'qty' => $item->qty,
-                        'sellPrice*qty' => $item->qty * $item->sellPrice,
+                        'product_id' => $item->id,
+                        'quantity' => $item->qty,
+                        'calculated_price' => $item->qty * $item->sellPrice,
                         'sellPrice' => $item->sellPrice,
                         'product_name' => $item->product->name,
                     ];
