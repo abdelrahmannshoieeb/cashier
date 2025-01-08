@@ -71,6 +71,8 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">طريقة الدفع </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">الرصيد</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">العمليات</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">التاريخ</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">طباعة فاتورة عملاء</th>
 
                             </tr>
                         </thead>
@@ -147,6 +149,14 @@
                                         </div>
                                     </div> 
                                     <a class="text-primary hover:text-sky-700" href="#" style="font-size: larger; font-weight: bolder" wire:click="delete({{$customersBond->id }})">تعديل</a>
+                                </td>
+                                
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder">
+                                {{ $customersBond->created_at->format('d-m-Y') }} <br>
+                                {{ $customersBond->created_at->addHours(2)->format('H:i') }}
+                                </td>
+                                <td>
+                                    <a  href="{{ route('customerBondPrint', $customersBond->id) }}" type="button" class="text-info hover:text-sky-700 mt-5 text-center"  type="button" style="font-size: larger; font-weight: bolder;">اطبع فاتورة سند</ش><br>
                                 </td>
                             </tr>
                             @endforeach

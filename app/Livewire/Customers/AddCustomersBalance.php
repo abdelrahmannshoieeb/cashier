@@ -15,6 +15,7 @@ class AddCustomersBalance extends Component
     public $note = 'لا يوجد ملاحظات';   
     public $method = 'cash';   
 
+    public $bondid = '';
 
     public $customers;   
     public $search;   
@@ -29,6 +30,7 @@ class AddCustomersBalance extends Component
     {
         $this->customers = Customer::where('name', 'like', '%' . $this->search . '%')->get();
     }
+
     public function viewAll()
     {
         $this->customers = Customer::all();
@@ -46,14 +48,14 @@ class AddCustomersBalance extends Component
         ]);
         
         if ($this->type == 1) {
-             $addToBalance= CustomerBonnd::create([
+               $addToBalance= CustomerBonnd::create([
                 'type' => 'add',
                 'value' => $this->amount,
                 'notes' => $this->note,
                 'method' => $this->method,
                 'customer_id' => $this->customer_id
             ]);
-
+            $this->bondid= $addToBalance->id;
             if($addToBalance){
                 $addToBalance->customer->balance = $addToBalance->customer->balance + $addToBalance->value; 
                 $addToBalance->customer->save();
@@ -75,6 +77,8 @@ class AddCustomersBalance extends Component
                 'method' => $this->method,
                 'customer_id' => $this->customer_id
             ]);
+            $this->bondid= $subtractFromBalance->id;
+
             if($subtractFromBalance){
                 $subtractFromBalance->customer->balance = $subtractFromBalance->customer->balance - $subtractFromBalance->value; 
                 $subtractFromBalance->customer->save();

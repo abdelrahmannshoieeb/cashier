@@ -42,7 +42,7 @@ class AddInvoice extends Component
     ];
 
     public $payMethod = 'cash';
-    public $customerName;  //
+    public $customerName = 'نقدي';  
     public $payedAmount = 0; //
     public $notes;       //
     public $discount = 0;  //
@@ -196,22 +196,24 @@ class AddInvoice extends Component
 
 
 
-    public function saveInvoice()
+    public function calctotal()
     {
-
-
         // Convert fields to proper types
         $this->total = is_numeric($this->total) ? (float) $this->total : 0.0;
         $this->payedAmount = is_numeric($this->payedAmount) ? (float) $this->payedAmount : 0.0;
         $this->discount = is_numeric($this->discount) ? (float) $this->discount : 0.0;
-
-        
-       
-
         // Calculate total
+       
         $this->total = collect($this->items)->sum(function ($item) {
             return ($item['quantity'] * $item['calculated_price']) - (float) $this->discount;
         });
+    }
+    public function saveInvoice()
+    {
+
+        if (!$this->total) {
+            $this->calctotal();
+        }
 
 
         // Validation
@@ -226,9 +228,9 @@ class AddInvoice extends Component
             ]);
         }
 
-      
 
-       
+
+
         if ($this->customerType === 'attached') {
             $customer = Customer::find($this->selectedCustomerId);
             $remainingBalance = $customer->balance - $this->total + $this->payedAmount + $this->discount;
@@ -243,10 +245,11 @@ class AddInvoice extends Component
                 $customer->save();
             }
         }
-       
-         
-      
 
+
+
+
+        // dd($this->payedAmount);
         // Set invoice status
         if ($this->payedAmount < $this->total && $this->payedAmount != 0) {
             $this->status = 'partiallyPaid';
@@ -258,8 +261,8 @@ class AddInvoice extends Component
             $this->still = $this->total;
         }
 
-       
-       
+
+
         // Save Invoice
         $invoice = Invoice::create([
             'total' => $this->total,
@@ -274,7 +277,7 @@ class AddInvoice extends Component
             'still' => $this->still,
             'user_id' => auth()->user()->id,
         ]);
-        
+
 
         $this->invoice = $invoice;
 
@@ -318,8 +321,6 @@ class AddInvoice extends Component
                     }
                 }
             }
-
-        
         }
 
         // Handle settings
@@ -330,10 +331,10 @@ class AddInvoice extends Component
             ]);
         }
 
-       
+
         session()->flash('message', 'Invoice created successfully.');
         $this->showRefundSection = !$this->showRefundSection;
-        $this->reset(['items', 'payMethod', 'payedAmount', 'notes', 'discount', 'status', 'customer_id']); 
+        $this->reset(['items', 'payMethod', 'payedAmount', 'notes', 'discount', 'status', 'customer_id']);
     }
 
 
@@ -440,6 +441,15 @@ class AddInvoice extends Component
         // dd($refunded);
 
     }
+
+    public function totalyPaid()
+    {
+        $this->calctotal();
+        $this->payedAmount = $this->total;
+        // dd($this->payedAmount);
+    }
+
+
     public function render()
     {
         return view('livewire.invoice.add-invoice');

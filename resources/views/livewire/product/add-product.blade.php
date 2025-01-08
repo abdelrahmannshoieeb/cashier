@@ -21,46 +21,31 @@
                         <textarea id="project-description" class="form-input" rows="8" wire:model="description"></textarea>
                         @error('description') <span class="text-red-500">{{ $message }}</span> @enderror
                     </div>
-                    <div>
-                        <label for="product-status" class="mb-2 block" style="font-weight:600;">حاله المنتج <span class="text-red-500">*</span></label>
-                        <div class="flex gap-x-6">
-                            <div class="flex">
-                                <input type="radio" name="isActive" class="form-radio" id="private" value="1" wire:model="isActive">
-                                <label for="private" class="text-sm text-gray-500 ms-2 dark:text-gray-400" style="font-weight:600;">مفعل</label>
-                            </div>
-
-                            <div class="flex">
-                                <input type="radio" name="isActive" class="form-radio" id="public" value="0" wire:model="isActive">
-                                <label for="public" class="text-sm text-gray-500 ms-2 dark:text-gray-400" style="font-weight:600;">مغلق</label>
-                            </div>
-                        </div>
-                        @error('isActive') <span class="text-red-500">{{ $message }}</span> @enderror
-                    </div>
 
                     <div class="grid md:grid-cols-4 gap-3">
                         <div class="">
                             <label for="start-date" class="mb-2 block" style="font-weight:600;">سعر بيع 1</label>
                             <input type="text" id="start-date" class="form-input" wire:model="price1"></input>
-                            @error('price1') <span class="text-red-500">{{ $message }}</span> @enderror
+                            @error('price1') <span class="text-red-500">يجب ان تدخل سعر البيع الاول بارقام انجليزية</span> @enderror
 
                         </div>
 
                         <div class="">
                             <label for="due-date" class="mb-2 block" style="font-weight:600;">سعر بيع 2</label>
                             <input type="text" id="due-date" class="form-input" wire:model="price2"></input>
-                            @error('price2') <span class="text-red-500">{{ $message }}</span> @enderror
+                            @error('price2') <span class="text-red-500">يجب ان تدخل سعر البيع الثاني بارقام انجليزية</span> @enderror
 
                         </div>
                         <div class="">
                             <label for="due-date" class="mb-2 block" style="font-weight:600;">سعر بيع 3</label>
                             <input type="text" id="due-date" class="form-input" style="font-weight:600;" wire:model="price3"></input>
-                            @error('price3') <span class="text-red-500">{{ $message }}</span> @enderror
+                            @error('price3') <span class="text-red-500">يجب ان تدخل سعر البيع الثالث بارقام انجليزية</span> @enderror
 
                         </div>
                         <div class="">
                             <label for="due-date" class="mb-2 block" style="font-weight:600;">سعر شراء</label>
                             <input type="text" id="due-date" class="form-input" style="font-weight:600;" wire:model="buying_price"></input>
-                            @error('buying_price') <span class="text-red-500">{{ $message }}</span> @enderror
+                            @error('buying_price') <span class="text-red-500">يجب ان تدخل سعر الشراء بارقام انجليزية وادخل اسعار البيع الثلاثة</span> @enderror
 
                         </div>
                     </div>
@@ -68,26 +53,14 @@
                         <div class="">
                             <label for="start-date" class="mb-2 block" style="font-weight:600;">كمية المنتج في المخزون</label>
                             <input type="text" id="start-date" class="form-input" style="font-weight:600;" wire:model="itemStock"></input>
-                            @error('itemStock') <span class="text-red-500">{{ $message }}</span> @enderror
+                            @error('itemStock') <span class="text-red-500">يجب ان تدخل كمية المنتج في المخزون</span> @enderror
 
                         </div>
 
-                        <div class="">
-                            <label for="due-date" class="mb-2 block" style="font-weight:600;">كمية الباكتات في المخزون</label>
-                            <input type="text" id="due-date" class="form-input" style="font-weight:600;" wire:model="PacketStock"></input>
-                            @error('packetStock') <span class="text-red-500">{{ $message }}</span> @enderror
-
-                        </div>
-                        <div class="">
-                            <label for="due-date" class="mb-2 block" style="font-weight:600;">عدد القطع في الباكته</label>
-                            <input type="text" id="due-date" class="form-input" style="font-weight:600;" wire:model="items_in_packet"></input>
-                            @error('items_in_packet') <span class="text-red-500">{{ $message }}</span> @enderror
-
-                        </div>
                         <div class="">
                             <label for="due-date" class="mb-2 block" style="font-weight:600;">نبهني عندما ينقص المنتج عن رقم</label>
                             <input type="text" id="due-date" class="form-input" style="font-weight:600;" wire:model="stockAlert"></input>
-                            @error('stockAlert') <span class="text-red-500">{{ $message }}</span> @enderror
+                            @error('stockAlert') <span class="text-red-500">يجب ان تدخل نبهني عندما ينقص المنتج عن رقم</span> @enderror
 
                         </div>
                     </div>
@@ -95,10 +68,12 @@
                     <div>
                         <label for="select-label" class="mb-2 block" style="font-weight:600;">التصنيف التابع له</label>
                         <select id="select-label" class="form-select" wire:model="category_id">
+                            <option value="">اختر التصنيف</option>
                             @foreach ($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
+                        @error('category_id') <span class="text-red-500">يجب ان تحدد التصنيف</span> @enderror
                     </div>
                 </div>
             </div>
@@ -106,13 +81,16 @@
 
         <div class="lg:col-span-3 mt-5">
             <div class="flex justify-end gap-3">
-                <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none">
-                    Cancle
+                <button
+                wire:click="cancel"
+                 type="button" class="inline-flex items-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none">
+                    إلغاء
+                    
                 </button>
                 <button
                     wire:click="save"
                     type="button" class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
-                    Save
+                    حفظ
                 </button>
             </div>
         </div>

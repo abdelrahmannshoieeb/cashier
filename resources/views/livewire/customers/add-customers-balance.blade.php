@@ -76,6 +76,7 @@
 
                     <div>
                         <button wire:click="create" style="  font-size: 18px;" type="button" class="btn bg-success text-white rounded-full">تنفيذ</button>
+                        <a wire:click="create" href="{{ route('customerBondPrint', $bondid) }}" style="  font-size: 18px;" type="button" class="btn bg-success text-white rounded-full" > تنفيذ وطباعة</a>
                     </div>
                 </div>
                 @if (session()->has('addsuccess'))

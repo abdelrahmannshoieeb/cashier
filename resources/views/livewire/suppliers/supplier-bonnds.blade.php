@@ -72,6 +72,8 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">طريقة الدفع </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">الرصيد</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">العمليات</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">التاريخ</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center" style="font-size: larger; font-weight: bolder">اطبع فاتورة سند</th>
 
                             </tr>
                         </thead>
@@ -123,6 +125,13 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-end text-bold font-medium">
                                     <a class="text-danger hover:text-sky-700 mt-5 " href="#" style="font-size: larger; font-weight: bolder;" wire:click="delete({{$SupplierBond->id }})">مسح</a><br>
                                     <a class="text-primary hover:text-sky-700" href="#" style="font-size: larger; font-weight: bolder" wire:click="delete({{$SupplierBond->id }})">تعديل</a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder">
+                                {{ $SupplierBond->created_at->format('d-m-Y') }} <br>
+                                {{ $SupplierBond->created_at->addHours(2)->format('H:i') }}
+                                </td>
+                                <td>
+                                    <a  href="{{ route('supplierBondPrint', $SupplierBond->id) }}" type="button" class="text-info hover:text-sky-700 mt-5 text-center"  type="button" style="font-size: larger; font-weight: bolder;">اطبع فاتورة سند</ش><br>
                                 </td>
                             </tr>
                             @endforeach

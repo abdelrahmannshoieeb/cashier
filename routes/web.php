@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/addSupplier', 'suppliers.addSupplier')->name('addSupplier');
     Route::view('/suppliers', 'suppliers.suppliers')->name('suppliers');
     Route::view('/supplierBonnds', 'suppliers.supplierBonnds')->name('supplierBonnds');
+    Route::view('/supplierBondPrint/{id}', 'suppliers.suppliersBondPrint')->name('supplierBondPrint');
 
     Route::view('/addExpense', 'expense.addExpense')->name('addExpense');
     Route::view('/expenses', 'expense.expenses')->name('expenses');
@@ -49,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/invoiceRefunded', 'invoices.invoiceRefunded')->name('invoiceRefunded');
     Route::view('/partiallyPaid', 'invoices.partiallyPaid')->name('partiallyPaid');
     Route::view('/printer/{id}', 'invoices.printer')->name('printer');
+    Route::view('/customerBondPrint/{id}', 'customers.customerBondPrint')->name('customerBondPrint');
 
 
     Route::view('/earning', 'money.earnings')->name('earning');

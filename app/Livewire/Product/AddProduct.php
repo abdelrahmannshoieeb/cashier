@@ -20,7 +20,6 @@ class AddProduct extends Component
     public $packetStock;
     public $items_in_packet;
     public $stockAlert;
-    public $isActive;
     public $category_id;
 
     public $categories;
@@ -31,16 +30,13 @@ class AddProduct extends Component
     protected $rules = [
         'name' => 'required|string|max:255',
         'description' => 'nullable|string',
-        'price1' => 'nullable|numeric',
+        'price1' => 'required|numeric',
         'price2' => 'nullable|numeric',
         'price3' => 'nullable|numeric',
-        'buying_price' => 'nullable|numeric',
+        'buying_price' => 'required|numeric',
         'itemStock' => 'nullable|integer',
-        'packetStock' => 'nullable|integer',
-        'items_in_packet' => 'nullable|integer',
         'stockAlert' => 'nullable|integer',
-        'isActive' => 'boolean',
-        'category_id' => 'nullable|exists:categories,id',
+        'category_id' => 'required|exists:categories,id',
     ];
 
     protected function rules()
@@ -79,19 +75,21 @@ class AddProduct extends Component
             'price3' => $this->price3,
             'buying price' => $this->buying_price,
             'itemStock' => $this->itemStock,
-            'packetStock' => $this->packetStock,
-            'items_in_packet' => $this->items_in_packet,
             'stockAlert' => $this->stockAlert,
-            'isActive' => $this->isActive,
+            'isActive' => true,
             'category_id' => $this->category_id,
         ]);
 
-        $this->reset('name', 'description', 'price1', 'price2', 'price3', 'buying_price', 'itemStock', 'packetStock', 'items_in_packet', 'stockAlert');
+        $this->reset('name', 'description', 'price1', 'price2', 'price3', 'buying_price', 'itemStock', 'stockAlert');
         session()->flash('message', 'تم اضافة المنتج بنجاح');
     }
 
 
 
+    public function cancel()
+    {
+        $this->reset('name', 'description', 'price1', 'price2', 'price3', 'buying_price', 'itemStock',  'stockAlert');
+    }
     public function render()
     {
         return view('livewire.product.add-product');

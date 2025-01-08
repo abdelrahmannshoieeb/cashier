@@ -50,7 +50,7 @@
                         @foreach($refunded_invoices as $invoice)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200  text-center">#{{ $invoice->id }}</td>
-                            @if ($invoice->customerName)
+                            @if ($invoice->customerType === 'unattached')
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200   text-center" style="font-size: larger; font-weight: bolder">{{ $invoice->customerName }}</td>
                             @else
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200   text-center" style="font-size: larger; font-weight: bolder">{{ $invoice->customer->name }}</td>
@@ -123,7 +123,7 @@
                             @endif
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-center" style="font-size: larger; font-weight: bolder">
                                 {{ $invoice->created_at->format('d-m-Y') }} <br>
-                                {{ $invoice->created_at->format('H:i') }}
+                                {{ $invoice->created_at->addHours(2)->format('H:i') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                                 <button type="button" class="text-danger hover:text-sky-700 mt-5 " data-fc-target="default-modal" data-fc-type="modal" type="button" style="font-size: larger; font-weight: bolder;">مسح</button><br>

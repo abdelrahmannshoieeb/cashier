@@ -91,7 +91,10 @@ return str_replace(range(0, 9), $arabicDigits, $number);
 @endphp
 
 <body>
-    <h1 class="text-center" style="font-weight: bolder;">النسيم للاعلاف</h1>
+    <h1 class="text-center" style="font-weight: bolder;">محلات ابو المجد </h1>
+    <h5 class="text-center" style="font-weight: bolder;">مسطرد عزبه البكري </h5>
+    <h5 class="text-center" style="font-weight: bolder;">01062229608//01115465641 </h5>
+    <h5 class="text-center" style="font-weight: bolder;">فاتورة عميل </h5>
 
     <div class="invoice-header" style="text-align: right; font-weight: bold;">
         <span>المسلسل: {{ convertToArabicDigits($invoice->id) }}</span>
@@ -107,8 +110,31 @@ return str_replace(range(0, 9), $arabicDigits, $number);
     </div>
 
     <div class="invoice-header" style="text-align: right; font-weight: bold;">
-        <span>اسم الكاشير: الحاج مبروك</span>
+        @if ($invoice->payMethod == 'creditCard' )
+        <span> النوع : بطاقة </span>
+        @elseif ($invoice->method == 'credit')
+        <span> النوع : اجل </span>
+        @elseif ($invoice->method == 'credit')
+        <span> النوع : كاش </span>
+        @else
+        <span> النوع : شيك </span>
+        @endif
+
+        @if ($invoice->user->role == 'admin' )
+        <span style="float: left;">
+                اسم الكاشير:
+          ابو المجد
+        </span>
+        @else
+        <span style="float: left;">
+                اسم الكاشير:
+          {{ convertToArabicDigits($invoice->user->name) }}
+        </span>
+        @endif
     </div>
+
+
+
 
     <div class="invoice-items">
         <table style="width: 100%; text-align: right; border-collapse: collapse; font-size: 14px; font-weight: bold; border: 2px solid black;">
@@ -212,6 +238,7 @@ return str_replace(range(0, 9), $arabicDigits, $number);
         </div>
     </div>
 
+    
     <div>
         <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
             <span style="text-align: left; flex: 1;">{{ convertToArabicDigits($invoice->still) }}</span>
@@ -219,33 +246,34 @@ return str_replace(range(0, 9), $arabicDigits, $number);
             <span style="text-align: right; flex: 1;"> المتبقي من الفاتورة</span>
         </div>
     </div>
-    @if ($invoice->customer->balance < 0)
-        
-    <div>
+    
+    @if ($invoice->customer && $invoice->customer->balance < 0)
+
+        <div>
         <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin: 2px 0;">
             <span style="text-align: left; flex: 1;">{{ convertToArabicDigits(abs($invoice->customer->balance)) }}</span>
             <span style="margin: 0 20px; flex: 1;"></span>
-            <span style="text-align: right; flex: 1; width: 100%;" > ما زال متبقي عليه</span>
+            <span style="text-align: right; flex: 1; width: 100%;"> ما زال متبقي عليه</span>
         </div>
-    </div>
-    @endif
+        </div>
+        @endif
 
-    <hr class="margin0">
-    <p class="text-center margin0">السعر شامل الضريبة</p>
-    <p class="text-center font-bold margin0">العنوان: هلية - ببا - بني سويف</p>
-    <p class="text-center font-bold margin0">رقم الهاتف: 01115179392</p>
-    <p class="text-center" style="font-size: 14px;">
-        01012620529 للبرمجيات Nexoria <strong>تم التطوير بواسطة</strong>
-    </p>
+        <hr class="margin0">
+        <p class="text-center margin0">يرجي مراجعة البضاعة عند الاستلام</p>
+        <p class="text-center margin0">البضاعة المستوردة ليس لها مرتجه </p>
+        <p class="text-center" style="font-size: 14px;">
+            01012620529 للبرمجيات Nexoria <strong>تم التطوير بواسطة</strong>
+        </p>
 
-    <script>
-        function printInvoice() {
-            window.print();
-        }
-        window.onload = function() {
-            setTimeout(printInvoice, 500);
-        };
-    </script> 
+
+        <script>
+            function printInvoice() {
+                window.print();
+            }
+            window.onload = function() {
+                setTimeout(printInvoice, 500);
+            };
+        </script>
 </body>
 
 

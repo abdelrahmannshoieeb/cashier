@@ -13,18 +13,13 @@
                             <label class="ms-1.5" for="flexSwitchCheck"></label>
                         </div>
                         <label class="text-gray-800 text-sm font-medium">
-                            {{ $customerType === 'attached' ? 'عميل سابق' : 'عميل لمره واحده' }}
+                            {{ $customerType === 'attached' ? 'عميل سابق' : 'نقدي' }}
                         </label>
                         @if ($customerType === 'attached')
                         <input type="text" id="search-customer" class="form-input ps-11" placeholder="ابحث عن عميل"
                             wire:model="searchCustomer">
                         <button class="btn bg-info text-white" wire:click="thesearchCustomer"> ابحث</button>
                         <label for="" style="font-size: 18px; text-align: center;"> اضغط على العميل لبدا الفاتورة</label>
-                      
-                        @else
-                        <input type="text" id="customer-name" class="form-input" placeholder="اسم العميل"
-                            wire:model="customerName">
-                        @error('customerName') <span class="text-danger"> ادخل اسم عميل لانشاء الفاتورة </span>@enderror
                         @endif
                     </div>
 
@@ -48,7 +43,7 @@
                 <div class="grid md:grid-cols-4 gap-3 mb-6 w-full">
                     <div>
                         <label class="text-gray-800 text-sm font-medium mb-2 block">المبلغ المدفوع</label>
-                        <input type="number" class="form-input" wire:model="payedAmount">
+                        <input type="number" class="form-input" wire:model="payedAmount" placeholder="{{ $payedAmount }}">
                     </div>
                     <div>
                         <label class="text-gray-800 text-sm font-medium mb-2 block">ملاحظات</label>
@@ -166,9 +161,9 @@
                         <select class="form-input" wire:model="sell_price">
                             @if ($selectedProduct)
                             @if ($selectedProduct->itemStock > 0)
-                            <option value="{{ $selectedProduct->price1 }}">Price 1 ({{ $selectedProduct->price1 }})</option>
-                            <option value="{{ $selectedProduct->price2 }}">Price 2 ({{ $selectedProduct->price2 }})</option>
-                            <option value="{{ $selectedProduct->price3 }}">Price 3 ({{ $selectedProduct->price3 }})</option>
+                            <option value="{{ $selectedProduct->price1 }}">السعر الاول ({{ $selectedProduct->price1 }})</option>
+                            <option value="{{ $selectedProduct->price2 }}">السعر الثاني ({{ $selectedProduct->price2 }})</option>
+                            <option value="{{ $selectedProduct->price3 }}">السعر الثالث ({{ $selectedProduct->price3 }})</option>
                             @else
                             @foreach ($selectedProduct->stock as $stock)
                             <option value="{{ $stock->price }}">
@@ -290,6 +285,14 @@
                 id="redirectButton"
                 class="inline-flex items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus:outline-none">
                 طباعة وحفظ الفاتورة
+            </button>
+            <button
+                style="cursor: pointer;"
+                wire:click="totalyPaid"
+                type="button"
+                id="redirectButton"
+                class="inline-flex items-center rounded-md border border-transparent bg-gray-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-500 focus:outline-none">
+                الفاتورة مدفوعة بالكامل
             </button>
             @else
             <p class="text-gray-500 " style="font-size: 20px;">اضف عميل ومنتجات لحفظ الفاتورة</p>
