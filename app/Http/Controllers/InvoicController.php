@@ -6,31 +6,38 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Invoice_item;
 use App\Models\Product;
+use App\Models\Refunded;
 use App\Models\settings;
 use App\Models\Stock;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use mPDF; 
+
 
 class InvoicController extends Controller
 {
     public function searchProduct(Request $request)
     {
         $products = Product::where('name', 'like', '%' . $request->search . '%')->with('stock')->get();
-    
+
         $transformedProducts = $products->map(function ($product) {
             $productData = $product->toArray(); // Get product data as an array
             $itemStock = $product->itemStock;
-    
+
             // If itemStock is not 0, return the product data without stock types
             if ($itemStock > 0) {
                 unset($productData['stock']); // Remove the stock relation
                 return $productData;
             }
-    
+
             // ItemStock is 0, find the first stock type with quantity > 0
             $stockTypes = ['1', '2', '3', '4']; // Define stock types in priority order
             $stockTypeData = null; // Initialize as null
-    
+
             foreach ($stockTypes as $type) {
                 $stock = $product->stock->where('type', $type)->first();
                 if ($stock && $stock->quantity > 0) {
@@ -42,7 +49,7 @@ class InvoicController extends Controller
                     break;
                 }
             }
-    
+
             // If no valid stock type is found, mark as "Out of Stock" and limit details
             if (!$stockTypeData) {
                 return [
@@ -51,30 +58,27 @@ class InvoicController extends Controller
                     'status' => 'Out of Stock'
                 ];
             }
-    
+
             // Add the stockType data if found
             unset($productData['stock']); // Remove the stock relation
             $productData['stockType'] = $stockTypeData;
             return $productData;
         });
-    
+
         return response()->json([
             'success' => true,
             'data' => $transformedProducts,
         ], 200);
     }
-    
-    
-    
-    
-    
 
 
-    public function searchCustomer(Request $request){
+
+    public function searchCustomer(Request $request)
+    {
         $customer = Customer::where('name', 'like', '%' . $request->search . '%')
-       
-        ->get();
-    
+
+            ->get();
+
         return response()->json([
             'success' => true,
             'data' => $customer
@@ -104,7 +108,7 @@ class InvoicController extends Controller
             'selectedCustomerId' => 'required_if:customerType,attached|exists:customers,id',
             'notes' => 'nullable|string',
         ]);
-    
+
         // Handle validation errors
         if ($validator->fails()) {
             return response()->json([
@@ -112,7 +116,7 @@ class InvoicController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-    
+
         // Extract data from the request
         $items = $request->input('items');
         $payMethod = $request->input('payMethod');
@@ -123,30 +127,30 @@ class InvoicController extends Controller
         $selectedCustomerId = $customerType === 'attached' ? $request->input('selectedCustomerId') : null;
         $notes = $request->input('notes');
         $user_id = $request->input('user_id');
-    
+
         // Calculate total
         $total = collect($items)->sum(function ($item) use ($discount) {
             return $item['quantity'] * $item['calculated_price'] - $discount;
         });
-    
+
         // Handle customer balance for attached customers
         if ($customerType === 'attached') {
             $customer = Customer::find($selectedCustomerId);
             $customer->balance = $customer->balance - $total + $payedAmount + $discount;
             $customer->save();
         }
-    
+
         // Determine status
         $status = 'unpaid';
         $still = $total;
-    
+
         if ($payedAmount < $total) {
             $status = 'partiallyPaid';
             $still = $total - $payedAmount;
         } elseif ($payedAmount == $total) {
             $status = 'paid';
         }
-    
+
         // Create the invoice
         $invoice = Invoice::create([
             'total' => $total,
@@ -161,17 +165,17 @@ class InvoicController extends Controller
             'still' => $still,
             'user_id' => auth()->user()->id,
         ]);
-    
+
         // Save items logic remains unchanged
         $itemDetails = []; // Array to store detailed item info
 
         foreach ($items as $item) {
             $product = Product::find($item['product_id']); // Retrieve product details
-        
+
             if ($product) {
                 // Update stock logic remains unchanged
                 $remainingQty = $item['quantity'];
-        
+
                 if ($product->itemStock >= $remainingQty) {
                     $product->itemStock -= $remainingQty;
                     $product->save();
@@ -181,7 +185,7 @@ class InvoicController extends Controller
                     $product->itemStock = 0;
                     $product->save();
                 }
-        
+
                 if ($remainingQty > 0) {
                     $stocks = Stock::where('product_id', $item['product_id'])->orderBy('type')->get();
                     foreach ($stocks as $stock) {
@@ -197,14 +201,14 @@ class InvoicController extends Controller
                         }
                     }
                 }
-        
+
                 if ($remainingQty > 0) {
                     return response()->json([
                         'success' => false,
                         'message' => "product out of all stocks: {$item['product_id']}",
                     ], 400);
                 }
-        
+
                 // Save item details for the response
                 $itemDetails[] = [
                     'product_id' => $item['product_id'],
@@ -212,7 +216,7 @@ class InvoicController extends Controller
                     'quantity' => $item['quantity'],
                     'calculated_price' => $item['calculated_price'],
                 ];
-        
+
                 // Save the invoice item
                 Invoice_item::create([
                     'qty' => $item['quantity'],
@@ -222,7 +226,7 @@ class InvoicController extends Controller
                 ]);
             }
         }
-        
+
         // Add seller's funds to box if enabled
         $settings = settings::first();
         if ($settings->adding_sellers_fund_to_box) {
@@ -230,9 +234,110 @@ class InvoicController extends Controller
                 'box_value' => $settings->box_value + $payedAmount,
             ]);
         }
-        
 
-        // Response with item details and product names
+
+        $html = view('invoices.apiPrinter', [
+            'invoice' => $invoice,
+            'items' => $itemDetails,
+            'total' => $total,
+            'customerName' => $customerType === 'unattached' ? $customerName : $customer->name,
+            'employeeName' => auth()->user()->name,
+            'employeeShop' => auth()->user()->shop->name,
+            'user' => User::find(auth()->user()->id),
+            'refunded' => Refunded::where('current_invoice_id', $invoice->id)->first(),
+        ])->render();
+        
+        $styles = '
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            width: 75mm;
+            margin: 0 auto;
+        }
+
+        .margin0 {
+            margin: 0;
+        }
+
+        .invoice-header,
+        .invoice-footer {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .invoice-header h1 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .invoice-header p {
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .invoice-details,
+        .invoice-items {
+            margin-bottom: 10px;
+        }
+
+        .invoice-details p,
+        .invoice-items p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            text-align: left;
+        }
+
+        .total {
+            font-weight: bold;
+            text-align: right;
+        }
+    </style>
+';
+
+// Combine styles with the HTML content
+$html = $styles . $html;
+
+        $pdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8', // Ensure proper encoding
+            'format' => 'A4', // Set A4 paper size
+            'orientation' => 'L', // Set landscape orientation
+        ]);
+        
+        // Write the HTML content to the PDF
+        $pdf->WriteHTML($html);
+        
+        // Set font for Arabic (Ensure the font is available in your fonts directory)
+        $pdf->SetFont('NotoNaskhArabic', '', 12); // Use Noto Naskh Arabic or any other Arabic font
+        
+        // Optionally set RTL (Right to Left) direction if required
+        $pdf->SetDirectionality('rtl');
+        
+        // Save the PDF to storage
+        try {
+            $pdfOutput = $pdf->Output('', 'S'); // Get the PDF as a string
+            Storage::disk('public')->put("invoices/invoice-{$invoice->id}.pdf", $pdfOutput); // Save PDF to storage
+        } catch (\Exception $e) {
+            Log::error("Error saving PDF: " . $e->getMessage());
+        }
+        
+        // URL to access the saved PDF
+        $pdfUrl = asset("storage/invoices/invoice-{$invoice->id}.pdf");
+        
         return response()->json([
             'success' => true,
             'message' => 'Invoice created successfully.',
@@ -242,6 +347,7 @@ class InvoicController extends Controller
             'employee_name' => auth()->user()->name,
             'employee_shop' => auth()->user()->shop->name,
             'customer_name' => $customerType === 'unattached' ? $customerName : $customer->name,
+            'invoice_image_url' => $pdfUrl
         ]);
     }
 
@@ -249,7 +355,7 @@ class InvoicController extends Controller
     public function getInvoices()
     {
         $invoices = Invoice::where('user_id', auth()->user()->id)->get();
-    
+
         $data = $invoices->map(function ($invoice) {
             return [
                 'invoice' => [
@@ -258,8 +364,8 @@ class InvoicController extends Controller
                     'payedAmount' => $invoice->payedAmount,
                     'discount' => $invoice->discount,
                     'status' => $invoice->status,
-                    'customer_name' => $invoice->customerType === 'unattached' 
-                        ? $invoice->customerName 
+                    'customer_name' => $invoice->customerType === 'unattached'
+                        ? $invoice->customerName
                         : $invoice->customer->name,
                     'employee_name' => auth()->user()->name,
                     'employee_shop' => auth()->user()->shop->name,
@@ -277,14 +383,10 @@ class InvoicController extends Controller
                 }),
             ];
         });
-    
+
         return response()->json([
             'success' => true,
             'data' => $data
         ], 200);
     }
-    
-    
-
-
 }

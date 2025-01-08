@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <title>Invoice</title>
@@ -69,14 +71,7 @@
 </head>
 
 
-@php
-$id = request()->segment(2);
-$invoice = \App\Models\Invoice::find($id);
 
-$refunded = \App\Models\Refunded::where('current_invoice_id', $id)->first();
-
-$user = \App\Models\User::find($invoice->user_id);
-@endphp
 @php
 // Helper functions for Arabic numeral conversion
 if (!function_exists('convertToArabicDigits')) {

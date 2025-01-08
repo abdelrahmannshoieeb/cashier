@@ -7,6 +7,7 @@ use App\Models\settings;
 use App\Models\Supplier;
 use App\Models\SupplierBond;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class SupplierController extends Controller
@@ -119,6 +120,19 @@ class SupplierController extends Controller
             'method' => $method,
             'supplier_id' => $request->supplier_id,
         ]);
+
+        $supplier_bond = [
+            'id' => $supplierTransaction->id,
+            'type' => $request->type,
+            'value' => $supplierTransaction->value,
+            'notes' => $supplierTransaction->notes,
+            'method' => $request->method,
+            'customerName' => $supplierTransaction->customer->name,
+            'userName' => Auth::user()->name,
+            'shopName' => Auth::user()->shop->name,
+            'day' => $supplierTransaction->created_at->format('Y-m-d'),
+            'time' => $supplierTransaction->created_at->addHours(2)->format('H:i'),
+        ];
     
         if ($supplierTransaction) {
             $supplier = $supplierTransaction->supplier;
@@ -144,7 +158,7 @@ class SupplierController extends Controller
         return response()->json([
             'success' => true,
             'message' => $type === 'add' ? 'Amount added successfully' : 'Amount subtracted successfully',
-            'data' => $supplierTransaction,
+            'data' => $supplier_bond,
         ], 200);
     }
     

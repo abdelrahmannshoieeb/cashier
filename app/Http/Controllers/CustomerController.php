@@ -7,6 +7,7 @@ use App\Models\CustomerBonnd;
 use App\Models\Expense;
 use App\Models\settings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
@@ -127,6 +128,18 @@ class CustomerController extends Controller
             'customer_id' => $request->customer_id,
         ]);
     
+        $customer_bond = [
+            'id' => $customerTransaction->id,
+            'type' => $request->type,
+            'value' => $customerTransaction->value,
+            'notes' => $customerTransaction->notes,
+            'method' => $request->method,
+            'customerName' => $customerTransaction->customer->name,
+            'userName' => Auth::user()->name,
+            'shopName' => Auth::user()->shop->name,
+            'day' => $customerTransaction->created_at->format('Y-m-d'),
+            'time' => $customerTransaction->created_at->addHours(2)->format('H:i'),
+        ];
         if ($customerTransaction) {
             $customer = $customerTransaction->customer;
     
@@ -151,7 +164,7 @@ class CustomerController extends Controller
         return response()->json([
             'success' => true,
             'message' => $type === 'add' ? 'Amount added successfully' : 'Amount subtracted successfully',
-            'data' => $customerTransaction,
+            'data' => $customer_bond,
         ], 200);
     }
     
