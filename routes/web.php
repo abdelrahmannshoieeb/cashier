@@ -19,7 +19,7 @@ Route::middleware(['auth'])->group(function () {
     // Route::view('/', 'index')->name('index');
     Route::view('/addCategory', 'category.addCategory')->name('addCategory');
     
-    Route::view('/', 'product.addProduct')->name('addProduct');
+    Route::view('/addProduct', 'product.addProduct')->name('addProduct');
     Route::view('/products', 'product.products')->name('products');
     Route::view('/editProduct/{id}', 'product.editproduct')->name('editProduct');
     
@@ -43,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/addExpense', 'expense.addExpense')->name('addExpense');
     Route::view('/expenses', 'expense.expenses')->name('expenses');
 
-    Route::view('/addInvoice', 'invoices.addInvoice')->name('addInvoice');
+    Route::view('/', 'invoices.addInvoice')->name('addInvoice');
     Route::view('/paidInvoices', 'invoices.paidInvoices')->name('paidInvoices');
     Route::view('/unpaidInvoices', 'invoices.unpaidInvoices')->name('unpaidInvoices');
     Route::view('/invoiceRefunded', 'invoices.invoiceRefunded')->name('invoiceRefunded');
